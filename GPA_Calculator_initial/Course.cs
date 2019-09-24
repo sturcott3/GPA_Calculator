@@ -14,22 +14,37 @@ namespace GPA_Calculator_initial
 
         public double percentGrade { get; set; }
 
+        public bool isComplete { get; set; }
+
         public char letterGrade { get; set; }
 
         public double qualityPoints { get; set; }
 
+        /// <summary>
+        /// Data structure to hold info about a single course. Self-determines letter grade from percent grade,
+        /// Quality points from letter grade and credit hours,
+        /// and incomplete status from the value [-1] in percent grade. 
+        /// </summary>
+        /// <param name="courseCode">ID of course</param>
+        /// <param name="creditHours">the number of credit hours the course is worth</param>
+        /// <param name="percentGrade">the final grade achieved in the course. [-1] means incomplete</param>
         public Course( string courseCode, double creditHours, double percentGrade)
         {
             this.courseCode = courseCode;
             this.creditHours = creditHours;
             this.percentGrade = percentGrade;
 
-            this.letterGrade = determineLetterGrade(percentGrade);
-            this.qualityPoints = determineQualityPoints(this.creditHours, this.letterGrade);
-        }
+            this.isComplete = TestIfCourseCompleted(this);
 
-        public char determineLetterGrade(double percentGrade)
-        {
+            if (this.isComplete)
+            {
+                this.letterGrade = determineLetterGrade(percentGrade);
+                this.qualityPoints = determineQualityPoints(this.creditHours, this.letterGrade);
+            }
+        }
+               
+        private static char determineLetterGrade(double percentGrade)
+        {//determine letter grade from percent grade
             char letterGrade;
 
             if (percentGrade < 50.0)
@@ -56,8 +71,8 @@ namespace GPA_Calculator_initial
             return letterGrade;
         }
 
-        private double determineQualityPoints(double creditHours, char letterGrade)
-        {
+        private static double determineQualityPoints(double creditHours, char letterGrade)
+        {//determine QPs from credit hours and letter grade
             double qualityPoints = 0;
 
             switch (letterGrade)
@@ -80,6 +95,18 @@ namespace GPA_Calculator_initial
             }
 
             return qualityPoints;
+        }
+
+        public static bool TestIfCourseCompleted(Course course)
+        {//determine complete/incomplete status. may need to acces this outside
+            bool isComplete = true;
+
+                if (course.percentGrade == -1)
+                {
+                    isComplete = false;
+                }
+
+            return isComplete;
         }
     }
 }

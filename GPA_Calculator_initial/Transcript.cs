@@ -24,7 +24,7 @@ namespace GPA_Calculator_initial
             this.semesters = new List<Semester> { new Semester() };
         }
 
-        private double calculateCumulativeGPA(List<Semester> semesters)
+        private static double calculateCumulativeGPA(List<Semester> semesters)
         {
             double cumulativeGPA = 0;
             double creditHouraccumulator = 0;
@@ -45,11 +45,59 @@ namespace GPA_Calculator_initial
 
         }
 
-        public Transcript calculateMinimumGrades(Transcript incompleteTranscript)
+        //calculate a single complete transcript from an incomplete one, with minimum passing grades 
+        public static Transcript calculateMinimumGrades(Transcript incompleteTranscript)
         {
             Transcript completeTranscript = new Transcript(new List<Semester>());
 
+            for (int i = 0; i < incompleteTranscript.semesters.Count; i++)
+            {
+                if (incompleteTranscript.semesters[i].isComplete)
+                {//if the semester is complete, add it to the working complete transcript
+                    completeTranscript.semesters.Add(new Semester(incompleteTranscript.semesters[i]));
+                }
+                else
+                {//set all the grades in incomplete courses to %50 (the minimum required to pass a single course
+                    completeTranscript.semesters.Add(new Semester(incompleteTranscript.semesters[i]));
+                    foreach (Course course in completeTranscript.semesters[i].courses)
+                    {
+                        if (!course.isComplete)
+                        {
+                            course.percentGrade = 50.0;
+                        }
+                    }
+                }
+            }
             return completeTranscript;
+        }
+
+
+        //test a single transcript to see whether it is eligible for graduation
+        public static bool TestIsGraduating(Transcript transcript)
+        {
+            //start with flag set to passing
+            bool isPassing = true;
+
+            //check that each course has a passing grade
+            foreach (Semester singleSemester in transcript.semesters)
+            {
+                foreach (Course singleCourse in singleSemester.courses)
+                {
+                    if (singleCourse.percentGrade < 50)
+                    {
+                        isPassing = false;
+                    }
+                }
+            }
+
+            //check that cumulative GPA is acceptable
+            if (calculateCumulativeGPA(transcript.semesters) < 2.0 )
+            {
+                isPassing = false;
+            }
+
+            //If we get past all checks without setting to false, the transcript passes
+            return isPassing;
         }
 
     }

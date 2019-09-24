@@ -9,17 +9,29 @@ namespace GPA_Calculator_initial
     class Semester
     {
         public List<Course> courses { get; set; }
-        public double semesterGPA { get; set; }
+        public double semesterGPA { get; set; }        
+        public bool isComplete { get; set; }
 
         public Semester(List<Course> courses)
-        {
+        {//to initialize from a complete data set (from hardcode, file, or form inputs)
             this.courses = courses;
-            this.semesterGPA = calculateSemesterGPA(this.courses);
+            this.isComplete = TestIfComplete(this);
+
+            if (this.isComplete)
+            {
+                this.semesterGPA = calculateSemesterGPA(this.courses);
+            }
         }
 
         public Semester()
-        {
+        {//To initialize empty
             this.courses = new List<Course>();
+        }
+
+        public Semester(Semester other)
+        {//to initialize from an incomplete transcript
+            this.courses = other.courses;
+            this.isComplete = TestIfComplete(this);
         }
 
         public double calculateSemesterGPA(List<Course> courses)
@@ -39,5 +51,19 @@ namespace GPA_Calculator_initial
             return GPA;
         }
 
+        public static bool TestIfComplete(Semester semester)
+        {
+            bool isComplete = true;
+
+            foreach (Course course in semester.courses)
+            {
+                if (!course.isComplete)
+                {
+                    isComplete = false;
+                }
+            }
+
+            return isComplete;
+        }
     }
 }

@@ -31,21 +31,21 @@ namespace GPA_Calculator_initial
                 new Course("CP207" , 72.0 , 75.5)};
 
         List<Course> testCourses3 = new List<Course>{
-                new Course("CP301" , 42.0 , 80.05),
-                new Course("CP302" , 42.0 , 80.05),
-                new Course("CP303" , 42.0 , 80.05),
-                new Course("CP304" , 42.0 , 80.05),
-                new Course("CP305" , 42.0 , 80.05),
-                new Course("CP306" , 42.0 , 80.05),
-                new Course("CP307" , 42.0 , 80.05)};
+                new Course("CP301" , 42.0 , -1),
+                new Course("CP302" , 42.0 , -1),
+                new Course("CP303" , 42.0 , -1),
+                new Course("CP304" , 42.0 , -1),
+                new Course("CP305" , 42.0 , -1),
+                new Course("CP306" , 42.0 , -1),
+                new Course("CP307" , 42.0 , -1)};
 
         List<Course> testCourses4 = new List<Course>{
-                new Course("CP401" , 42.0 , 80.05),
-                new Course("CP402" , 42.0 , 80.05),
-                new Course("CP403" , 42.0 , 80.05),
-                new Course("CP404" , 42.0 , 80.05),
-                new Course("CP405" , 42.0 , 80.05),
-                new Course("CP406" , 42.0 , 80.05)};
+                new Course("CP401" , 42.0 , -1),
+                new Course("CP402" , 42.0 , -1),
+                new Course("CP403" , 42.0 , -1),
+                new Course("CP404" , 42.0 , -1),
+                new Course("CP405" , 42.0 , -1),
+                new Course("CP406" , 42.0 , -1)};
     
         Semester testSemester1;
         Semester testSemester2;
@@ -78,6 +78,13 @@ namespace GPA_Calculator_initial
             Console.WriteLine("Semester 4 GPA: " + testSemester4.semesterGPA);
 
             Console.WriteLine("Cumulative GPA: " + testTranscript.cumulativeGPA);
+            Console.WriteLine("Passing: " + Transcript.TestIsGraduating(testTranscript));
+
+            Transcript transcript2 = new Transcript(Transcript.calculateMinimumGrades(testTranscript).semesters);
+
+            Console.WriteLine("Cumulative GPA: " + transcript2.cumulativeGPA);
+            Console.WriteLine("Passing: " + Transcript.TestIsGraduating(transcript2));
+
         }
     }
 }
