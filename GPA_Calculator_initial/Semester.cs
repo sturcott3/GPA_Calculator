@@ -8,16 +8,21 @@ namespace GPA_Calculator_initial
 {
     class Semester
     {
-        public Course[] courses { get; set; }
+        public List<Course> courses { get; set; }
         public double semesterGPA { get; set; }
 
-        public Semester(Course[] courses)
+        public Semester(List<Course> courses)
         {
             this.courses = courses;
             this.semesterGPA = calculateSemesterGPA(this.courses);
         }
 
-        public double calculateSemesterGPA(Course[] courses)
+        public Semester()
+        {
+            this.courses = new List<Course>();
+        }
+
+        public double calculateSemesterGPA(List<Course> courses)
         {
             double GPA = 0.0;
             double creditHouraccumulator = 0;

@@ -8,18 +8,23 @@ namespace GPA_Calculator_initial
 {
     class Transcript
     {
-        public Semester[] semesters { get; set; }
+        public List<Semester> semesters { get; set; }
 
         public double cumulativeGPA { get; set; }
 
-        public Transcript(Semester[] semesters)
+        public Transcript(List<Semester> semesters)
         {
             this.semesters = semesters;
 
             this.cumulativeGPA = calculateCumulativeGPA(this.semesters);
         }
 
-        private double calculateCumulativeGPA(Semester[] semesters)
+        public Transcript()
+        {
+            this.semesters = new List<Semester> { new Semester() };
+        }
+
+        private double calculateCumulativeGPA(List<Semester> semesters)
         {
             double cumulativeGPA = 0;
             double creditHouraccumulator = 0;
@@ -38,6 +43,13 @@ namespace GPA_Calculator_initial
 
             return cumulativeGPA;
 
+        }
+
+        public Transcript calculateMinimumGrades(Transcript incompleteTranscript)
+        {
+            Transcript completeTranscript = new Transcript(new List<Semester>());
+
+            return completeTranscript;
         }
 
     }
