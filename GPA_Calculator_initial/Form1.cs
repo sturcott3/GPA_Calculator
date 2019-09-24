@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace GPA_Calculator_initial
 {
@@ -55,6 +56,10 @@ namespace GPA_Calculator_initial
         List<Semester> testSemesters;
 
         Transcript testTranscript;
+        Transcript testTranscript2;
+
+        StreamWriter outputFile;
+
 
         public Form1()
         {
@@ -68,23 +73,62 @@ namespace GPA_Calculator_initial
             testSemesters = new  List<Semester> { testSemester1, testSemester2, testSemester3, testSemester4};
 
             testTranscript = new Transcript(testSemesters);
+            outputFile = new StreamWriter("outputFile.txt");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("Semester 1 GPA: " + testSemester1.semesterGPA);
-            Console.WriteLine("Semester 2 GPA: " + testSemester2.semesterGPA);
-            Console.WriteLine("Semester 3 GPA: " + testSemester3.semesterGPA);
-            Console.WriteLine("Semester 4 GPA: " + testSemester4.semesterGPA);
+            Console.WriteLine("Execution Finished");
 
-            Console.WriteLine("Cumulative GPA: " + testTranscript.cumulativeGPA);
-            Console.WriteLine("Passing: " + Transcript.TestIsGraduating(testTranscript));
 
-            Transcript transcript2 = new Transcript(Transcript.calculateMinimumGrades(testTranscript).semesters);
 
-            Console.WriteLine("Cumulative GPA: " + transcript2.cumulativeGPA);
-            Console.WriteLine("Passing: " + Transcript.TestIsGraduating(transcript2));
+            //TODO - Figure out where the byRef problem is that mutates the values in the original
+            printTranscript(testTranscript);
+
+            testTranscript2 = new Transcript(Transcript.calculateMinimumGrades(testTranscript));
+            
+            printTranscript(testTranscript);
 
         }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            outputFile.Close();
+            this.Close();
+        }
+
+        private void printTranscript(Transcript toPrint)
+        {
+            int i = 1;
+
+            foreach (Semester semester in toPrint.semesters)
+            {
+                outputFile.WriteLine("================================================================================================");
+                outputFile.WriteLine("Semester" + i++);
+
+                foreach (Course course in semester.courses)
+                {
+                    
+                    outputFile.WriteLine("Course Code: " + course.courseCode);
+                    outputFile.WriteLine("Credit Hours: " + course.creditHours);
+                    outputFile.WriteLine(course.isComplete? "Course Completed" : "Course Incomplete");
+                    outputFile.WriteLine("Percent Grade: " + course.percentGrade);
+                    outputFile.WriteLine("Letter Grade: " + course.letterGrade);
+                    outputFile.WriteLine("Quality Points: " + course.qualityPoints);
+                    outputFile.WriteLine("-------------------------------------------------------------------------------------");
+                }
+
+                outputFile.WriteLine(semester.isComplete? "Semester Complete" : "Semester Incomplete");
+                outputFile.WriteLine("Semester GPA : " + semester.semesterGPA);
+            }
+
+            outputFile.WriteLine("Cumulative GPA: " + toPrint.cumulativeGPA);
+            outputFile.WriteLine("-------------------------------------------------------------------------------------");
+            outputFile.WriteLine("-------------------------------------------------------------------------------------");
+            outputFile.WriteLine("-------------------------------------------------------------------------------------");
+            outputFile.WriteLine("-------------------------------------------------------------------------------------");
+        }
+
+       
     }
 }

@@ -30,7 +30,7 @@ namespace GPA_Calculator_initial
 
         public Semester(Semester other)
         {//to initialize from an incomplete transcript
-            this.courses = other.courses;
+            this.courses = new List<Course>(other.courses);
             this.isComplete = TestIfComplete(this);
         }
 

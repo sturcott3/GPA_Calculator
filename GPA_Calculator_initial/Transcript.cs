@@ -12,16 +12,18 @@ namespace GPA_Calculator_initial
 
         public double cumulativeGPA { get; set; }
 
+        public string header { get; set; }
+
         public Transcript(List<Semester> semesters)
         {
-            this.semesters = semesters;
+            this.semesters = new List<Semester>(semesters);
 
             this.cumulativeGPA = calculateCumulativeGPA(this.semesters);
         }
 
-        public Transcript()
+        public Transcript(Transcript other)
         {
-            this.semesters = new List<Semester> { new Semester() };
+            this.semesters = new List<Semester>(other.semesters);
         }
 
         private static double calculateCumulativeGPA(List<Semester> semesters)
@@ -48,23 +50,16 @@ namespace GPA_Calculator_initial
         //calculate a single complete transcript from an incomplete one, with minimum passing grades 
         public static Transcript calculateMinimumGrades(Transcript incompleteTranscript)
         {
-            Transcript completeTranscript = new Transcript(new List<Semester>());
+            Transcript completeTranscript = new Transcript(new List<Semester>(incompleteTranscript.semesters));
 
-            for (int i = 0; i < incompleteTranscript.semesters.Count; i++)
+            for (int i = 0; i < completeTranscript.semesters.Count; i++)
             {
-                if (incompleteTranscript.semesters[i].isComplete)
-                {//if the semester is complete, add it to the working complete transcript
-                    completeTranscript.semesters.Add(new Semester(incompleteTranscript.semesters[i]));
-                }
-                else
-                {//set all the grades in incomplete courses to %50 (the minimum required to pass a single course
-                    completeTranscript.semesters.Add(new Semester(incompleteTranscript.semesters[i]));
+                if (!completeTranscript.semesters[i].isComplete)
+                {
                     foreach (Course course in completeTranscript.semesters[i].courses)
                     {
-                        if (!course.isComplete)
-                        {
-                            course.percentGrade = 50.0;
-                        }
+                        course.percentGrade = 50.0;
+                        course.letterGrade = 'D';
                     }
                 }
             }
