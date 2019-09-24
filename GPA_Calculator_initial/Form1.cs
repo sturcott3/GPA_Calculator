@@ -73,27 +73,27 @@ namespace GPA_Calculator_initial
             testSemesters = new  List<Semester> { testSemester1, testSemester2, testSemester3, testSemester4};
 
             testTranscript = new Transcript(testSemesters);
-            outputFile = new StreamWriter("outputFile.txt");
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Console.WriteLine("Execution Finished");
-
-
-
-            //TODO - Figure out where the byRef problem is that mutates the values in the original
+            
+            outputFile = new StreamWriter("original.txt");
             printTranscript(testTranscript);
+            outputFile.Close();
 
             testTranscript2 = new Transcript(Transcript.calculateMinimumGrades(testTranscript));
-            
-            printTranscript(testTranscript);
 
+            outputFile = new StreamWriter("firstMinimum.txt");
+            printTranscript(testTranscript2);
+            outputFile.Close();
         }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
-            outputFile.Close();
+            
             this.Close();
         }
 
@@ -104,11 +104,12 @@ namespace GPA_Calculator_initial
             foreach (Semester semester in toPrint.semesters)
             {
                 outputFile.WriteLine("================================================================================================");
-                outputFile.WriteLine("Semester" + i++);
+                outputFile.WriteLine("================================================================================================");
+                outputFile.WriteLine("================================================================================================");
+                outputFile.WriteLine("Semester " + i++);
 
                 foreach (Course course in semester.courses)
-                {
-                    
+                { 
                     outputFile.WriteLine("Course Code: " + course.courseCode);
                     outputFile.WriteLine("Credit Hours: " + course.creditHours);
                     outputFile.WriteLine(course.isComplete? "Course Completed" : "Course Incomplete");
@@ -116,14 +117,15 @@ namespace GPA_Calculator_initial
                     outputFile.WriteLine("Letter Grade: " + course.letterGrade);
                     outputFile.WriteLine("Quality Points: " + course.qualityPoints);
                     outputFile.WriteLine("-------------------------------------------------------------------------------------");
+                    outputFile.WriteLine("-------------------------------------------------------------------------------------");
+                    outputFile.WriteLine("-------------------------------------------------------------------------------------");
                 }
 
                 outputFile.WriteLine(semester.isComplete? "Semester Complete" : "Semester Incomplete");
-                outputFile.WriteLine("Semester GPA : " + semester.semesterGPA);
+                outputFile.WriteLine(semester.isComplete? "Semester GPA : " + semester.semesterGPA : "Semester GPA: N/A");
             }
 
             outputFile.WriteLine("Cumulative GPA: " + toPrint.cumulativeGPA);
-            outputFile.WriteLine("-------------------------------------------------------------------------------------");
             outputFile.WriteLine("-------------------------------------------------------------------------------------");
             outputFile.WriteLine("-------------------------------------------------------------------------------------");
             outputFile.WriteLine("-------------------------------------------------------------------------------------");

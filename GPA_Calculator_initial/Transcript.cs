@@ -24,7 +24,10 @@ namespace GPA_Calculator_initial
         public Transcript(Transcript other)
         {
             this.semesters = new List<Semester>(other.semesters);
+
+            this.cumulativeGPA = calculateCumulativeGPA(this.semesters);
         }
+
 
         private static double calculateCumulativeGPA(List<Semester> semesters)
         {
@@ -34,38 +37,54 @@ namespace GPA_Calculator_initial
 
             foreach (Semester singleSemester in semesters)
             {
-                foreach (Course singleCourse in singleSemester.courses)
+                if (singleSemester.isComplete)
                 {
-                    creditHouraccumulator += singleCourse.creditHours;
-                    qualityPointAccumulator += singleCourse.qualityPoints;
+                    foreach (Course singleCourse in singleSemester.courses)
+                    {
+                        creditHouraccumulator += singleCourse.creditHours;
+                        qualityPointAccumulator += singleCourse.qualityPoints;
+                    }
                 }
             }
-
             cumulativeGPA = qualityPointAccumulator / creditHouraccumulator;
 
             return cumulativeGPA;
-
         }
 
         //calculate a single complete transcript from an incomplete one, with minimum passing grades 
         public static Transcript calculateMinimumGrades(Transcript incompleteTranscript)
         {
-            Transcript completeTranscript = new Transcript(new List<Semester>(incompleteTranscript.semesters));
+            Transcript completeTranscript = new Transcript(incompleteTranscript);
 
             for (int i = 0; i < completeTranscript.semesters.Count; i++)
-            {
+            {//iterate over each semester
                 if (!completeTranscript.semesters[i].isComplete)
-                {
-                    foreach (Course course in completeTranscript.semesters[i].courses)
-                    {
-                        course.percentGrade = 50.0;
-                        course.letterGrade = 'D';
+                {//iterate over each course in the semester if the semester is ot marked as complete
+                    for (int ii = 0; ii < completeTranscript.semesters[i].courses.Count; ii++)
+                    {//set each grade to minimum passing requirement
+                        completeTranscript.semesters[i].courses[ii] = new Course(incompleteTranscript.semesters[i].courses[ii].courseCode, 
+                                                                                 incompleteTranscript.semesters[i].courses[ii].creditHours, 
+                                                                                 50.0);
+                        completeTranscript.semesters[i].courses[ii].isComplete = true;
                     }
+                    completeTranscript.semesters[i].isComplete = true;
+                    completeTranscript.semesters[i].semesterGPA = completeTranscript.semesters[i].calculateSemesterGPA(completeTranscript.semesters[i].courses);
                 }
             }
+            
+            completeTranscript.cumulativeGPA = Transcript.calculateCumulativeGPA(completeTranscript.semesters);    
             return completeTranscript;
         }
 
+        public List<Transcript> calculatePermutations(Transcript incompleteTranscript)
+        {
+            List<Transcript> permutations = new List<Transcript>();
+
+
+
+            return permutations;
+
+        }
 
         //test a single transcript to see whether it is eligible for graduation
         public static bool TestIsGraduating(Transcript transcript)

@@ -26,12 +26,23 @@ namespace GPA_Calculator_initial
         public Semester()
         {//To initialize empty
             this.courses = new List<Course>();
+            this.isComplete = TestIfComplete(this);
+
+            if (this.isComplete)
+            {
+                this.semesterGPA = calculateSemesterGPA(this.courses);
+            }
         }
 
         public Semester(Semester other)
         {//to initialize from an incomplete transcript
             this.courses = new List<Course>(other.courses);
             this.isComplete = TestIfComplete(this);
+
+            if (this.isComplete)
+            {
+                this.semesterGPA = calculateSemesterGPA(this.courses);
+            }
         }
 
         public double calculateSemesterGPA(List<Course> courses)
