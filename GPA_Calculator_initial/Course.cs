@@ -43,7 +43,7 @@ namespace GPA_Calculator_initial
             }
         }
                
-        private static char determineLetterGrade(double percentGrade)
+        public static char determineLetterGrade(double percentGrade)
         {//determine letter grade from percent grade
             char letterGrade;
 

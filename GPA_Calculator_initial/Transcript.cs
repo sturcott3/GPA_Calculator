@@ -56,14 +56,17 @@ namespace GPA_Calculator_initial
         {
             Transcript completeTranscript = new Transcript(incompleteTranscript);
 
+            List<Transcript> failingTranscripts = new List<Transcript>();
+
+            //set incompleted courses to D
             for (int i = 0; i < completeTranscript.semesters.Count; i++)
             {//iterate over each semester
                 if (!completeTranscript.semesters[i].isComplete)
-                {//iterate over each course in the semester if the semester is ot marked as complete
+                {//iterate over each course in the semester if the semester is not marked as complete
                     for (int ii = 0; ii < completeTranscript.semesters[i].courses.Count; ii++)
-                    {//set each grade to minimum passing requirement
-                        completeTranscript.semesters[i].courses[ii] = new Course(incompleteTranscript.semesters[i].courses[ii].courseCode, 
-                                                                                 incompleteTranscript.semesters[i].courses[ii].creditHours, 
+                    {//increment a grade by 10%
+                        completeTranscript.semesters[i].courses[ii] = new Course(incompleteTranscript.semesters[i].courses[ii].courseCode,
+                                                                                 incompleteTranscript.semesters[i].courses[ii].creditHours,
                                                                                  50.0);
                         completeTranscript.semesters[i].courses[ii].isComplete = true;
                     }
@@ -71,8 +74,41 @@ namespace GPA_Calculator_initial
                     completeTranscript.semesters[i].semesterGPA = completeTranscript.semesters[i].calculateSemesterGPA(completeTranscript.semesters[i].courses);
                 }
             }
-            
-            completeTranscript.cumulativeGPA = Transcript.calculateCumulativeGPA(completeTranscript.semesters);    
+
+
+            while (!(completeTranscript.cumulativeGPA > 2.0))
+            {
+
+                for (int i = 0; i < completeTranscript.semesters.Count; i++)
+
+                {//iterate over each semester
+                 
+                        for (int ii = 0; ii < completeTranscript.semesters[i].courses.Count; ii++)
+                        {//iterate over each course in the semester
+
+                            //update the semester and cumulative GPAs
+                            completeTranscript.semesters[i].semesterGPA = completeTranscript.semesters[i].calculateSemesterGPA(completeTranscript.semesters[i].courses);
+
+                            completeTranscript.cumulativeGPA = Transcript.calculateCumulativeGPA(completeTranscript.semesters);
+
+                            if (completeTranscript.cumulativeGPA >= 2.0)
+                            {//if we pass break out of the function
+                                return completeTranscript;
+                            }
+                            else
+                            {   //increment a grade by 10%, add transcript to the list of failures
+                                failingTranscripts.Add(completeTranscript);
+                                completeTranscript.semesters[i].courses[ii].percentGrade += 10.0;
+                                completeTranscript.semesters[i].courses[ii].letterGrade = Course.determineLetterGrade(completeTranscript.semesters[i].courses[ii].percentGrade);
+                            }
+                        }
+                    
+                }
+            }
+
+            completeTranscript.cumulativeGPA = Transcript.calculateCumulativeGPA(completeTranscript.semesters);
+
+            Console.WriteLine(failingTranscripts.Count + " failed transcripts processed"); 
             return completeTranscript;
         }
 
