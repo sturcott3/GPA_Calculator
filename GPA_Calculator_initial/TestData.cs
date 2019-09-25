@@ -62,13 +62,13 @@ namespace GPA_Calculator_initial
                 new Course("CP207" , 72.0 , 55.5)};
 
         public static List<Course> testCourses2_3 = new List<Course>{
-                new Course("CP301" , 42.0 , 55.5),
-                new Course("CP302" , 42.0 , 55.5),
-                new Course("CP303" , 42.0 , 55.5),
-                new Course("CP304" , 42.0 , 55.5),
-                new Course("CP305" , 42.0 , 55.5),
-                new Course("CP306" , 42.0 , 55.5),
-                new Course("CP307" , 42.0 , 55.5)};
+                new Course("CP301" , 42.0 , 65.5),
+                new Course("CP302" , 42.0 , 65.5),
+                new Course("CP303" , 42.0 , 65.5),
+                new Course("CP304" , 42.0 , 65.5),
+                new Course("CP305" , 42.0 , 65.5),
+                new Course("CP306" , 42.0 , 65.5),
+                new Course("CP307" , 42.0 , 65.5)};
 
         public static List<Course> testCourses2_4 = new List<Course>{
                 new Course("CP401" , 42.0 , -1),
