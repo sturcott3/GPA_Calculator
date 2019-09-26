@@ -20,12 +20,14 @@ namespace GPA_Calculator_2
         public char LetterGrade { get; set; }
         public double QualityPoints { get; set; }
 
-        //using the property notation to force update the letter grade whenever the percent grade is changed
+        //Only need to expose the backing field for this property to allow added logic in the setter
         private double percentGrade;
         public double PercentGrade {
             get => percentGrade;
             set {percentGrade = value;
-                 LetterGrade = CalcLetterGrade(percentGrade);} }
+                 LetterGrade = CalcLetterGrade(percentGrade);
+                 QualityPoints = CalcQualityPoints(CreditHours,LetterGrade);
+            } }
 
         //-_-_End Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
         //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -39,8 +41,7 @@ namespace GPA_Calculator_2
             PercentGrade = percentGrade;
 
             Completed = (percentGrade == -1)? false: true;
-
-
+            
             QualityPoints = CalcQualityPoints(creditHours, LetterGrade);
            
         }
@@ -53,8 +54,11 @@ namespace GPA_Calculator_2
         static char CalcLetterGrade(double percentGrade)
         {//determine letter grade from percent grade
             char letterGrade;
-
-            if (percentGrade < 50.0)
+            if (percentGrade == -1)
+            {
+                letterGrade = 'I';
+            }
+            else if (percentGrade > 0 && percentGrade < 50.0)
             {//fail
                 letterGrade = 'F';
             }
