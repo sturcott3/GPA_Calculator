@@ -13,23 +13,23 @@ namespace GPA_Calculator_2
     {
         static void Main(string[] args)
         {
-            List<Semester> testSems1 = new List<Semester>(){
-            new Semester(TestData.testCourses1_1),
-            new Semester(TestData.testCourses1_2),
-            new Semester(TestData.testCourses1_3),
-            new Semester(TestData.testCourses1_4)};
+            //List<Semester> testSems1 = new List<Semester>(){
+            //new Semester(TestData.testCourses1_1),
+            //new Semester(TestData.testCourses1_2),
+            //new Semester(TestData.testCourses1_3),
+            //new Semester(TestData.testCourses1_4)};
 
-            Transcript StartingTranscript = new Transcript(testSems1, TestData.student1);
+            //Transcript StartingTranscript = new Transcript(testSems1, TestData.student1);
            
-            Console.WriteLine("Enter a target GPA: ");
-            double target;
-            Double.TryParse(Console.ReadLine(), out target);
+            //Console.WriteLine("Enter a target GPA: ");
+            //double target;
+            //Double.TryParse(Console.ReadLine(), out target);
 
-            Transcript CalculatedTranscript = Transcript.CalcOutcome(StartingTranscript, target);
+            //Transcript CalculatedTranscript = Transcript.CalcOutcome(StartingTranscript, target);
             
-            Console.WriteLine("Execution Finished");
-            Console.Write("...");
-            Console.ReadKey();
+            //Console.WriteLine("Execution Finished");
+            //Console.Write("...");
+            //Console.ReadKey();
         }
     }
 }

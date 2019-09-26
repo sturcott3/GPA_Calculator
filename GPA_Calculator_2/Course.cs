@@ -10,7 +10,7 @@ using System.Threading.Tasks;
  2019-09-23*/
 namespace GPA_Calculator_2
 {
-    class Course
+    public class Course
     {
         //-_-_Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 

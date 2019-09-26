@@ -11,7 +11,7 @@ using System.IO;
  2019-09-23*/
 namespace GPA_Calculator_2
 {
-    class Transcript
+    public class Transcript
     {
         //-_-_Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
@@ -50,7 +50,7 @@ namespace GPA_Calculator_2
         {
             //-_-Setup_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
             //create a transcript to operate on, and print the original to file
-            PrintTranscript(incomplete, "../test/original.txt");
+            PrintTranscript(incomplete, "../test/" + incomplete.Header[5] + "/original.txt");
             Transcript current  = new Transcript(incomplete);
 
             //tracking variable (number of *different* Transcripts tested)
@@ -73,18 +73,18 @@ namespace GPA_Calculator_2
             if (current.CumulativeGPA >= targetGPA)
             {
                 Console.WriteLine("Congrats, your existing marks are high enough to reach your goal with minimums in all remaining courses");
-                PrintTranscript(current, "../test/Calculated_all50s.txt");
+                PrintTranscript(current, "../test/" + current.Header[5] + "/Calculated_all50s.txt");
                 return current;
             }
 
             //If the transcript graduates, print it to file and set the lastPrinted tracker
             if (TestGraduating(current))
             {
-                PrintTranscript(current, "../test/Calculated_graduating" + numEx + ".txt");
+                PrintTranscript(current, "../test/" + current.Header[5] + "/minimum.txt");
                 lastPrinted = current.CumulativeGPA;
             }
 
-            //-Iterative Checks_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+            //Iterative Checks_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
             // if not at the target, loop until meeting requirements
             while ((current.CumulativeGPA < targetGPA) && (!current.TestMaxChecked()))
             {
@@ -101,19 +101,20 @@ namespace GPA_Calculator_2
                         current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
                         if (current.CumulativeGPA >= targetGPA)
                         {
-                            PrintTranscript(current, "../test/testCalculated_final.txt");
+                            PrintTranscript(current, "../test/"+current.Header[5]+"/final.txt");
                             return current;
                         }
                         //otherwise, check if it graduates and surpasses the last printed by at least .10
                         //if it does, print to file and continue checks
                         else if ((TestGraduating(current)) && (current.CumulativeGPA >= (lastPrinted + 0.10)))
                         {
-                            PrintTranscript(current, "../test/testCalculated" + numEx++ + ".txt");
+                            PrintTranscript(current, "../test/" + current.Header[5] + "/Calculated_" + numEx++ + ".txt");
                             lastPrinted += 0.10;
                         }
                     }
                 }
             }
+            PrintTranscript(current, "../test/" + current.Header[5] + "/final.txt");
 
             //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
             //record number of attempts

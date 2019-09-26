@@ -10,7 +10,7 @@ using System.Threading.Tasks;
  2019-09-23*/
 namespace GPA_Calculator_2
 {
-    static class TestData
+    public static class TestData
     {
 
         //Test dataset 1-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -19,8 +19,9 @@ namespace GPA_Calculator_2
             "Name: Samuel Turcotte",
             "Class of: 2020",
             "Campus: Thunder Bay",
-            "Student Id: 100192852",
-            "email: sturcot3@confederationcollege.ca"};
+            "StudentId:100192852",
+            "email: sturcot3@confederationcollege.ca",
+            "sTurcot3"};
 
         public static List<Course> testCourses1_1 = new List<Course>{
                 new Course("CP101" , 42.0 , 101.5),
@@ -63,17 +64,18 @@ namespace GPA_Calculator_2
             "Name: Wile e. Coyote",
             "Class of: 1951",
             "Campus: Acme Labs",
-            "Student Id: 900925673",
-            "email: weCoyote@acmelabs.net"};
+            "StudentId:900925673",
+            "email: weCoyote@acmelabs.net",
+            "weCoyote"};
 
         public static List<Course> testCourses2_1 = new List<Course>{
-                new Course("CP101" , 42.0 , 70.5),
-                new Course("CP102" , 42.0 , 70.5),
-                new Course("CP103" , 42.0 , 70.5),
-                new Course("CP104" , 42.0 , 70.5),
-                new Course("CP105" , 42.0 , 70.5),
-                new Course("CP106" , 42.0 , 70.5),
-                new Course("CP107" , 42.0 , 70.5)};
+                new Course("CP101" , 42.0 , 55.5),
+                new Course("CP102" , 42.0 , 55.5),
+                new Course("CP103" , 42.0 , 55.5),
+                new Course("CP104" , 42.0 , 55.5),
+                new Course("CP105" , 42.0 , 55.5),
+                new Course("CP106" , 42.0 , 55.5),
+                new Course("CP107" , 42.0 , 55.5)};
 
         public static List<Course> testCourses2_2 = new List<Course>{
                 new Course("CP201" , 42.0 , 55.5),
@@ -107,8 +109,9 @@ namespace GPA_Calculator_2
             "Name: Mary Poppins",
             "Class of: 1936",
             "Campus: London",
-            "Student Id: 000000009",
-            "email: mPoppins@supercalifragilisticexpialadocious.com"};
+            "StudentId:000000009",
+            "email: mPoppins@supercalifragilisticexpialadocious.com",
+            "mPoppins"};
 
         public static List<Course> testCourses3_1 = new List<Course>{
                 new Course("CP101" , 42.0 , 101.5),
@@ -151,8 +154,9 @@ namespace GPA_Calculator_2
             "Name: James Kirk",
             "Class of: 3972",
             "Campus: Kuiper Belt",
-            "Student Id: 009999999",
-            "email: jKirk@starfleet.space"};
+            "StudentId:009999999",
+            "email: jKirk@starfleet.space",
+            "jKirk"};
 
         public static List<Course> testCourses4_1 = new List<Course>{
                 new Course("CP101" , 42.0 , 101.5),
