@@ -88,12 +88,18 @@
             this.mnuMainHelpInstructions = new System.Windows.Forms.ToolStripMenuItem();
             this.grpStudent = new System.Windows.Forms.GroupBox();
             this.lblWarning = new System.Windows.Forms.Label();
+            this.grdDisplayCourses = new System.Windows.Forms.DataGridView();
+            this.colCourseCode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colCreditHours = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colPercentGrade = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colLetterGrade = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.grpInput.SuspendLayout();
             this.grpDisplay.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.mnuMain.SuspendLayout();
             this.grpStudent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grdDisplayCourses)).BeginInit();
             this.SuspendLayout();
             // 
             // grpInput
@@ -440,12 +446,12 @@
             // 
             // grpDisplay
             // 
+            this.grpDisplay.Controls.Add(this.grdDisplayCourses);
             this.grpDisplay.Controls.Add(this.txtIncrement);
             this.grpDisplay.Controls.Add(this.label5);
             this.grpDisplay.Controls.Add(this.txtTarget);
             this.grpDisplay.Controls.Add(this.label1);
             this.grpDisplay.Controls.Add(this.btnCalculate);
-            this.grpDisplay.Controls.Add(this.panel2);
             this.grpDisplay.Controls.Add(this.panel1);
             this.grpDisplay.Location = new System.Drawing.Point(321, 27);
             this.grpDisplay.Name = "grpDisplay";
@@ -502,7 +508,7 @@
             this.panel2.Controls.Add(this.label15);
             this.panel2.Controls.Add(this.label14);
             this.panel2.Controls.Add(this.lbxDisplayCourses);
-            this.panel2.Location = new System.Drawing.Point(6, 143);
+            this.panel2.Location = new System.Drawing.Point(734, 27);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(388, 193);
             this.panel2.TabIndex = 48;
@@ -596,7 +602,7 @@
             this.mnuMainHelp});
             this.mnuMain.Location = new System.Drawing.Point(0, 0);
             this.mnuMain.Name = "mnuMain";
-            this.mnuMain.Size = new System.Drawing.Size(740, 24);
+            this.mnuMain.Size = new System.Drawing.Size(1540, 24);
             this.mnuMain.TabIndex = 5;
             this.mnuMain.Text = "menuStrip1";
             // 
@@ -647,15 +653,57 @@
             this.lblWarning.TabIndex = 0;
             this.lblWarning.Text = "No warnings";
             // 
+            // grdDisplayCourses
+            // 
+            this.grdDisplayCourses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grdDisplayCourses.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colCourseCode,
+            this.colCreditHours,
+            this.colPercentGrade,
+            this.colLetterGrade});
+            this.grdDisplayCourses.Location = new System.Drawing.Point(6, 142);
+            this.grdDisplayCourses.Name = "grdDisplayCourses";
+            this.grdDisplayCourses.Size = new System.Drawing.Size(388, 180);
+            this.grdDisplayCourses.TabIndex = 52;
+            // 
+            // colCourseCode
+            // 
+            this.colCourseCode.HeaderText = "Course Code";
+            this.colCourseCode.Name = "colCourseCode";
+            this.colCourseCode.ReadOnly = true;
+            this.colCourseCode.Width = 80;
+            // 
+            // colCreditHours
+            // 
+            this.colCreditHours.HeaderText = "Credit Hours";
+            this.colCreditHours.Name = "colCreditHours";
+            this.colCreditHours.ReadOnly = true;
+            this.colCreditHours.Width = 90;
+            // 
+            // colPercentGrade
+            // 
+            this.colPercentGrade.HeaderText = "Grade ( % )";
+            this.colPercentGrade.Name = "colPercentGrade";
+            this.colPercentGrade.ReadOnly = true;
+            this.colPercentGrade.Width = 90;
+            // 
+            // colLetterGrade
+            // 
+            this.colLetterGrade.HeaderText = "Grade (Letter)";
+            this.colLetterGrade.Name = "colLetterGrade";
+            this.colLetterGrade.ReadOnly = true;
+            this.colLetterGrade.Width = 90;
+            // 
             // Input_Display
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(740, 477);
+            this.ClientSize = new System.Drawing.Size(1540, 477);
             this.Controls.Add(this.grpStudent);
             this.Controls.Add(this.grpDisplay);
             this.Controls.Add(this.grpInput);
             this.Controls.Add(this.mnuMain);
+            this.Controls.Add(this.panel2);
             this.MainMenuStrip = this.mnuMain;
             this.Name = "Input_Display";
             this.Text = "GPA Calculator";
@@ -670,6 +718,7 @@
             this.mnuMain.ResumeLayout(false);
             this.mnuMain.PerformLayout();
             this.grpStudent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grdDisplayCourses)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -736,6 +785,11 @@
         private System.Windows.Forms.Button btnCalculate;
         private System.Windows.Forms.GroupBox grpStudent;
         private System.Windows.Forms.Label lblWarning;
+        private System.Windows.Forms.DataGridView grdDisplayCourses;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCourseCode;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCreditHours;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colPercentGrade;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colLetterGrade;
     }
 }
 

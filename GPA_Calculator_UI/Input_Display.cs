@@ -129,7 +129,7 @@ namespace GPA_Calculator_UI
             for (int i = 0; i < numCourseFieldsShown; i++)
             {
                 //set courses with no grade recorded to -1 to set course as 'Incomplete'
-                if (gradeFields[i].Text == null)
+                if (gradeFields[i].Text == null || gradeFields[i].Text == " ")
                 {
                     gradeFields[i].Text = "-1";
                 }
@@ -161,13 +161,23 @@ namespace GPA_Calculator_UI
         /// <param name="e"></param>
         private void lbxSemesters_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lbxDisplayCourses.Items.Clear();
+            //lbxDisplayCourses.Items.Clear();
 
-            //loop through the appropriate semester's course list
+            ////loop through the appropriate semester's course list
+            //foreach (Course course in input_Transcript.Semesters[lbxSemesters.SelectedIndex].Courses)
+            //{
+            //    lbxDisplayCourses.Items.Add(PrintCourseToListbox(course));
+            //}
+
+            grdDisplayCourses.Rows.Clear();
+
             foreach (Course course in input_Transcript.Semesters[lbxSemesters.SelectedIndex].Courses)
             {
-                lbxDisplayCourses.Items.Add(PrintCourseToListbox(course));
+                string[] currentRow = { course.Code, course.CreditHours.ToString(), course.PercentGrade.ToString(), course.LetterGrade.ToString() };
+
+                grdDisplayCourses.Rows.Add(currentRow);
             }
+
         }
 
         //Exit program
@@ -189,7 +199,7 @@ namespace GPA_Calculator_UI
         /// <returns></returns>
         private string PrintCourseToListbox(Course toPrint)
         {
-            string line = String.Format("{0}    |    {1}    |    {2}    |   {3}",
+            string line = String.Format("{0,-8}       |       {1,-8}       |       {2,-8}       |      {3,-8}",
                 toPrint.Code, toPrint.CreditHours, toPrint.PercentGrade, toPrint.LetterGrade);
             return line;
         }
