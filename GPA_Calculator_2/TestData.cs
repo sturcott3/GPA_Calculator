@@ -28,7 +28,7 @@ namespace GPA_Calculator_2
                 new Course("CP102" , 42.0 , 100.0),
                 new Course("CP103" , 42.0 , 95.5),
                 new Course("CP104" , 42.0 , 90.0),
-                new Course("CP105" , 42.0 , 82.5),
+                new Course("CP105" , 42.0 , 99.5),
                 new Course("CP106" , 42.0 , 94.2),
                 new Course("CP107" , 42.0 , 90.9)};
 
@@ -37,7 +37,7 @@ namespace GPA_Calculator_2
                 new Course("CP202" , 42.0 , 100.0),
                 new Course("CP203" , 42.0 , 95.5),
                 new Course("CP204" , 42.0 , 90.0),
-                new Course("CP205" , 42.0 , 82.5),
+                new Course("CP205" , 42.0 , 87.5),
                 new Course("CP206" , 42.0 , 94.2),
                 new Course("CP207" , 72.0 , 75.5)};
 

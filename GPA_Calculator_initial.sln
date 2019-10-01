@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPA_Calculator_2", "GPA_Cal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit_Test_PRJ", "Unit_Test_PRJ\Unit_Test_PRJ.csproj", "{55471C2F-353E-4F70-89EA-4876FD9CD6F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPA_Calculator_UI", "GPA_Calculator_UI\GPA_Calculator_UI.csproj", "{E79F70BE-91F2-4B58-A7B7-57765D7B64CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{55471C2F-353E-4F70-89EA-4876FD9CD6F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55471C2F-353E-4F70-89EA-4876FD9CD6F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55471C2F-353E-4F70-89EA-4876FD9CD6F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79F70BE-91F2-4B58-A7B7-57765D7B64CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79F70BE-91F2-4B58-A7B7-57765D7B64CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79F70BE-91F2-4B58-A7B7-57765D7B64CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79F70BE-91F2-4B58-A7B7-57765D7B64CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

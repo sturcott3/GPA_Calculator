@@ -40,6 +40,14 @@ namespace GPA_Calculator_2
             CourseList = Transcript.SetupCourseList(Semesters);
             CumulativeGPA = CalcCumuGPA(Semesters);
         }
+   
+        public Transcript()
+        {
+            Header = new List<string>();
+            Semesters = new List<Semester>();
+            CourseList = new List<Course>();
+            CumulativeGPA = 0;
+        }
 
         //-_-_End Constructors-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
         //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
