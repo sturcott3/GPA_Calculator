@@ -17,15 +17,20 @@ using System.Windows.Forms;
 
 /*TODO LIST
  1. >>btnRemoveCourse_Click - add code to remove data, not just hide the fields
-     
-     
+ 
+2. >>btnRecordSemester_Click - add code to handle blank course codes 
+(auto generate based on position in input list + semesters.Count)
+
+3. 
+
  END TODO LIST*/
 
 namespace GPA_Calculator_UI
 {
     public partial class Input_Display : Form
     {
-
+        //-_Setup/Fields-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        
         //constants
         const int NUM_COURSE_FIELDS = 10;
 
@@ -35,12 +40,18 @@ namespace GPA_Calculator_UI
         private TextBox[] creditHourFields;
         private TextBox[] gradeFields;
 
+        //To hold user input
         private Transcript input_Transcript;
 
         public Input_Display()
         {
             InitializeComponent();
         }
+
+        //-_End Setup/Fields-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_Initializaion-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -61,6 +72,11 @@ namespace GPA_Calculator_UI
             //populate lists for visibility control
             PopulateVisibilityLists();
         }
+        
+        //-_End Initialization-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_Event Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 
         /// <summary>
         /// Adds another row of fields to the form, allowing the user to 
@@ -95,9 +111,102 @@ namespace GPA_Calculator_UI
                 numCourseFieldsShown -= 1;
             }
 
-            //TODO 1 : Add code that courses from the currently tracked semester
+            //TODO 1 : Add code that removes courses from the currently tracked semester to handle cases 
+            //where user is editing a semester that has already been added. 
+        }
+        
+        /// <summary>
+        /// Adds the current data in the input section of the form into a new semester in the input Transcript
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRecordSemester_Click(object sender, EventArgs e)
+        {
+            Semester toInput = new Semester();
+            double credHr;
+            double grd;
+
+            for (int i = 0; i < numCourseFieldsShown; i++)
+            {
+                //set courses with no grade recorded to -1 to set course as 'Incomplete'
+                if (gradeFields[i].Text == null)
+                {
+                    gradeFields[i].Text = "-1";
+                }
+
+                //only add the semester if the input is readable (type check)
+                //between this check and previous line, allow for grades and/or course codes to be left blank,
+                //but require credit hours to be filled in (this is the very minimum information needed)
+                if (double.TryParse(creditHourFields[i].Text, out credHr) && 
+                    double.TryParse(gradeFields[i].Text, out grd))
+                {
+                    //TODO 2: handle blank inputs for course codes
+                    toInput.Courses.Add(new Course(courseCodeFields[i].Text,
+                                      double.Parse(creditHourFields[i].Text),
+                                      double.Parse(gradeFields[i].Text)));
+                }
+            }
+
+            if (toInput.Courses.Count != 0)
+            {
+                input_Transcript.Semesters.Add(toInput);
+                UpdateSemesterListbox();
+            }
         }
 
+        /// <summary>
+        /// Update the Course List display whenever the selected semester in the semeseter list changes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lbxSemesters_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lbxDisplayCourses.Items.Clear();
+
+            //loop through the appropriate semester's course list
+            foreach (Course course in input_Transcript.Semesters[lbxSemesters.SelectedIndex].Courses)
+            {
+                lbxDisplayCourses.Items.Add(PrintCourseToListbox(course));
+            }
+        }
+
+        //Exit program
+        private void mnuMainFileQuit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        //-_End Event Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_Internal Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+
+        /// <summary>
+        /// prepares a string for display in the Courses listbox
+        /// </summary>
+        /// <param name="toPrint"></param>
+        /// <returns></returns>
+        private string PrintCourseToListbox(Course toPrint)
+        {
+            string line = String.Format("{0}    |    {1}    |    {2}    |   {3}",
+                toPrint.Code, toPrint.CreditHours, toPrint.PercentGrade, toPrint.LetterGrade);
+            return line;
+        }
+
+
+        /// <summary>
+        /// Updates the semester list (list box control) according to the current state of the input transcript
+        /// </summary>
+        void UpdateSemesterListbox()
+        {
+            lbxSemesters.Items.Clear();
+            for (int i = 0; i < input_Transcript.Semesters.Count; i++)
+            {
+                lbxSemesters.Items.Add("Semester "+ (i+1) );
+            }
+        }
+        
         /// <summary>
         /// Entirely dependant on this form
         /// gets the controls from the form and puts them into arrays for easy access
@@ -136,11 +245,6 @@ namespace GPA_Calculator_UI
             gradeFields[7] = txtGrade_C8;
             gradeFields[8] = txtGrade_C9;
             gradeFields[9] = txtGrade_C10;
-        }
-
-        private void mnuMainFileQuit_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }
