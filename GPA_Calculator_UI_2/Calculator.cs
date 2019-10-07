@@ -13,6 +13,13 @@ namespace GPA_Calculator_UI_2
 {
     public partial class Calculator : Form
     {
+        /*TODO LIST
+         1. Add form with instructions
+         2. Make input Validation more robust
+         3.
+         4.
+
+             */
 
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Setup-_-_-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
@@ -20,10 +27,8 @@ namespace GPA_Calculator_UI_2
         
             //declare fields to recieve input
         Transcript input_Transcript;
+        List<DataGridView> semesterPages;
 
-        //to track which semester is currently being worked on/displayed
-        int displaySemester;
-        
         public Calculator()
         {
             InitializeComponent();
@@ -33,65 +38,74 @@ namespace GPA_Calculator_UI_2
         {
             //Initialize fields to recieve input
             input_Transcript = new Transcript();
+            semesterPages = new List<DataGridView>() { grdDisplay_Sem_1,grd_Display_Sem2,
+                                                       grd_Display_Sem3, grd_Display_Sem4 };
 
-            displaySemester = 0;
         }
         
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Non-Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        private bool ValidateSemester()
+        private bool ValidateSemester(List<DataGridView> semesters)
         {//determine whether the inputs given on the currently displayed semester are valid
          //must handle both complete and Incomplete courses/semesters
          
             bool isValid = true;
 
-            //Handle the case where they switch to another semester without entering anything
-            if ((string)grdCourseDisplay.Rows[0].Cells[0].Value == null)
+            foreach (DataGridView semester in semesters)
             {
-                isValid = false;
-                MessageBox.Show("Empty Semester cannot be read"); 
-            }
 
-            //Check each line for minimum input (except the blank line that I can't avoid)
-            for (int i = 0; i < (grdCourseDisplay.Rows.Count -1); i++)
-            {
-                if ((string)grdCourseDisplay.Rows[i].Cells[0].Value == null ||
-                    (string)grdCourseDisplay.Rows[i].Cells[1].Value == null)
+                //Handle the case where they switch to another semester without entering anything
+                if ((string)semester.Rows[0].Cells[0].Value == null)
                 {
-                    MessageBox.Show("Missing a required input. Each course must have at least " +
-                        "Course Code and Credit Hours filled out. To show a course as incomplete, leave " +
-                        "only the Grade(%) field blank");
                     isValid = false;
-                    return isValid;
+                    MessageBox.Show("Empty Semester cannot be read");
                 }
 
-                if ((string)grdCourseDisplay.Rows[i].Cells[2].Value == null)
+                //Check each line for minimum input (avoiding the blank line at the end with Count-1)
+                for (int i = 0; i < (semester.Rows.Count - 1); i++)
                 {
-                    grdCourseDisplay.Rows[i].Cells[2].Value = "-1";
+                    if ((string)semester.Rows[i].Cells[0].Value == null ||
+                        (string)semester.Rows[i].Cells[1].Value == null)
+                    {
+                        MessageBox.Show("Missing a required input. Each course must have at least " +
+                            "Course Code and Credit Hours filled out. To show a course as incomplete, leave " +
+                            "only the Grade(%) field blank");
+                        isValid = false;
+                        return isValid;
+                    }
+
+                    if ((string)semester.Rows[i].Cells[2].Value == null)
+                    {
+                        semester.Rows[i].Cells[2].Value = "-1";
+                    }
                 }
             }
             return isValid;
         }
 
-        private void AddSemesterToTranscript()
+
+        private void AddSemesterToTranscript(DataGridView current)
         {// should only be called directly after ValidateSemester() returns true
 
             //create a new course list
             List<Course> tempCourseList = new List<Course>();
+
+            tempCourseList.Clear();//test, not needed
+
             string[] row = new string[3];
 
             //iterate over each row in the grid, adding a new course to the Semester for each row. 
-            //goes to Count - 1 to eliminate the last row (always empty) 
+            //goes to Count - 1 to eliminate the last row (always empty because of dataGridView) 
             //TODO make it so it avoids empty rows instead
-            for (int i = 0; i < (grdCourseDisplay.Rows.Count - 1) ; i++)
+            for (int i = 0; i < (current.Rows.Count - 1) ; i++)
             {
                 //eliminate the read of the final empty row (happens by default due to dataGrid)
-                if ((string)grdCourseDisplay.Rows[i].Cells[0].Value != null)
+                if ((string)current.Rows[i].Cells[0].Value != null)
                 {
-                    row[0] = (string)grdCourseDisplay.Rows[i].Cells[0].Value;
-                    row[1] = (string)grdCourseDisplay.Rows[i].Cells[1].Value;
-                    row[2] = (string)grdCourseDisplay.Rows[i].Cells[2].Value;
+                    row[0] = (string)current.Rows[i].Cells[0].Value;
+                    row[1] = (string)current.Rows[i].Cells[1].Value;
+                    row[2] = (string)current.Rows[i].Cells[2].Value;
                 }
                 //use the Course constructor to calculate letter grade/ quality points
                 Course tempCourse = new Course(row[0], Convert.ToDouble(row[1]), Convert.ToDouble(row[2]));
@@ -116,37 +130,72 @@ namespace GPA_Calculator_UI_2
             return line;
         }
 
-        private void CalculateOutput()
-        {
-            Transcript.PrintTranscript(input_Transcript, "./UITESTING/testOutput.txt");
-        }
-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        private void lbxSemesters_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
 
         private void btnAddSemester_Click(object sender, EventArgs e)
         {
-            if (ValidateSemester())
-            {
-                AddSemesterToTranscript();
-            }
+
         }
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            CalculateOutput();
+           
         }
 
-        private void grdCourseDisplay_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {//this is required to allow me to read data from the cells of the dataGridView without the user 
-            //needing to press a button to save their changes
-            grdCourseDisplay.EndEdit();
+        private void btnDelSemester_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnTestInput_Click(object sender, EventArgs e)
+        {
+            //clear the semester list in case they puch the button more than once 
+            input_Transcript.Semesters.Clear();
+
+            if (ValidateSemester(semesterPages))
+            {
+                foreach (DataGridView semesterPage in semesterPages)
+                {//Get the semesters from the datagrids and put them in the transcript
+                    AddSemesterToTranscript(semesterPage);
+                }
+            }
+            //print the transcript to file as 'original'
+            Transcript.PrintTranscript(input_Transcript, "./UITESTING/original.txt");
+        }
+
+        //below events are required to allow me to read data from the cells of the dataGridViews 
+        //without the user pressing a button to save their changes
+        private void grd_Display_Sem1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            grdDisplay_Sem_1.EndEdit();
+        }
+
+        private void grd_Display_Sem2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            grd_Display_Sem2.EndEdit();
+        }
+
+        private void grd_Display_Sem3_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            grd_Display_Sem3.EndEdit();
+        }
+
+        private void grd_Display_Sem4_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            grd_Display_Sem4.EndEdit();
+        }
+
+        //close the form from the menu
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void instructionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("TODO : Add form with instructions");
         }
     }
 }
