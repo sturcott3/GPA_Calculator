@@ -24,22 +24,22 @@ namespace GPA_Calculator_2
             "sTurcot3"};
 
         public static List<Course> testCourses1_1 = new List<Course>{
-                new Course("CP101" , 42.0 , 101.5),
-                new Course("CP102" , 42.0 , 100.0),
-                new Course("CP103" , 42.0 , 95.5),
-                new Course("CP104" , 42.0 , 90.0),
-                new Course("CP105" , 42.0 , 99.5),
-                new Course("CP106" , 42.0 , 94.2),
-                new Course("CP107" , 42.0 , 90.9)};
+                new Course("CP101" , 42.0 , 99),
+                new Course("CP102" , 42.0 , 90),
+                new Course("CP103" , 42.0 , 85),
+                new Course("CP104" , 42.0 , 92),
+                new Course("CP105" , 42.0 , 89),
+                new Course("CP106" , 42.0 , 97),
+                new Course("CP107" , 42.0 , 92)};
 
         public static List<Course> testCourses1_2 = new List<Course>{
-                new Course("CP201" , 42.0 , 101.5),
-                new Course("CP202" , 42.0 , 100.0),
-                new Course("CP203" , 42.0 , 95.5),
-                new Course("CP204" , 42.0 , 90.0),
-                new Course("CP205" , 42.0 , 87.5),
-                new Course("CP206" , 42.0 , 94.2),
-                new Course("CP207" , 72.0 , 75.5)};
+                new Course("CP201" , 42.0 , 93),
+                new Course("CP202" , 42.0 , 85),
+                new Course("CP203" , 42.0 , 96),
+                new Course("CP204" , 42.0 , 88),
+                new Course("CP205" , 42.0 , 96),
+                new Course("CP206" , 42.0 , 89),
+                new Course("CP207" , 72.0 , 76)};
 
         public static List<Course> testCourses1_3 = new List<Course>{
                 new Course("CP301" , 42.0 , -1),
