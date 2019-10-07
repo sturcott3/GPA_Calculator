@@ -34,8 +34,6 @@ namespace GPA_Calculator_UI_2
             //Initialize fields to recieve input
             input_Transcript = new Transcript();
 
-            input_Transcript.Semesters.Add(new Semester());
-            
             displaySemester = 0;
         }
         
@@ -48,11 +46,31 @@ namespace GPA_Calculator_UI_2
          
             bool isValid = true;
 
-            if ((string)grdCourseDisplay.Rows[0].Cells[0].Value == string.Empty)
+            //Handle the case where they switch to another semester without entering anything
+            if ((string)grdCourseDisplay.Rows[0].Cells[0].Value == null)
             {
                 isValid = false;
+                MessageBox.Show("Empty Semester cannot be read"); 
             }
 
+            //Check each line for minimum input (except the blank line that I can't avoid)
+            for (int i = 0; i < (grdCourseDisplay.Rows.Count -1); i++)
+            {
+                if ((string)grdCourseDisplay.Rows[i].Cells[0].Value == null ||
+                    (string)grdCourseDisplay.Rows[i].Cells[1].Value == null)
+                {
+                    MessageBox.Show("Missing a required input. Each course must have at least " +
+                        "Course Code and Credit Hours filled out. To show a course as incomplete, leave " +
+                        "only the Grade(%) field blank");
+                    isValid = false;
+                    return isValid;
+                }
+
+                if ((string)grdCourseDisplay.Rows[i].Cells[2].Value == null)
+                {
+                    grdCourseDisplay.Rows[i].Cells[2].Value = "-1";
+                }
+            }
             return isValid;
         }
 
@@ -61,16 +79,20 @@ namespace GPA_Calculator_UI_2
 
             //create a new course list
             List<Course> tempCourseList = new List<Course>();
-            string[] row = new string[5];
+            string[] row = new string[3];
 
             //iterate over each row in the grid, adding a new course to the Semester for each row. 
-            for (int i = 0; i < grdCourseDisplay.Rows.Count; i++)
+            //goes to Count - 1 to eliminate the last row (always empty) 
+            //TODO make it so it avoids empty rows instead
+            for (int i = 0; i < (grdCourseDisplay.Rows.Count - 1) ; i++)
             {
-                row[0] = (string)grdCourseDisplay.Rows[i].Cells[0].Value;
-                row[1] = (string)grdCourseDisplay.Rows[i].Cells[1].Value;
-                row[2] = (string)grdCourseDisplay.Rows[i].Cells[2].Value;
-                //row[3] = Convert.ToString(grdCourseDisplay.Rows[i].Cells[3].Value);
-
+                //eliminate the read of the final empty row (happens by default due to dataGrid)
+                if ((string)grdCourseDisplay.Rows[i].Cells[0].Value != null)
+                {
+                    row[0] = (string)grdCourseDisplay.Rows[i].Cells[0].Value;
+                    row[1] = (string)grdCourseDisplay.Rows[i].Cells[1].Value;
+                    row[2] = (string)grdCourseDisplay.Rows[i].Cells[2].Value;
+                }
                 //use the Course constructor to calculate letter grade/ quality points
                 Course tempCourse = new Course(row[0], Convert.ToDouble(row[1]), Convert.ToDouble(row[2]));
 
@@ -104,64 +126,21 @@ namespace GPA_Calculator_UI_2
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         private void lbxSemesters_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ////Check the currently displayed semester for validity. 
-            //if (ValidateSemester())
-            //{
-            //    //If valid, write it to the input transcript,
-            //    AddSemesterToTranscript();
-                 
-            //    //change where we are looking,
-            //    displaySemester = lbxSemesters.SelectedIndex;
 
-            //    //clear the grid of the old semester
-            //    grdCourseDisplay.Rows.Clear();
-
-            //    //then display the newly selected semester
-            //    foreach (Course course in input_Transcript.Semesters[displaySemester].Courses)
-            //    {
-            //        grdCourseDisplay.Rows.Add(GenDisplayRow(course));
-            //    }
-            //}
-            //else
-            //{
-            //    //prompt user to complete input, and re-select the appropriate semester in the listbox
-            //}
         }
 
 
         private void btnAddSemester_Click(object sender, EventArgs e)
         {
-            //Check the currently displayed semester for validity. 
             if (ValidateSemester())
             {
-                //If valid, write it to the input transcript, 
                 AddSemesterToTranscript();
-
-                //then add the new semester to the semesters listbox
-                lbxSemesters.Items.Add("Semester " + input_Transcript.Semesters.Count.ToString());
-                
-                //then display the newly added blank semester
-
-            }
-            else
-            {
-                //prompt user to complete input
             }
         }
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            //Check the currently displayed semester for validity. 
-            if (ValidateSemester())
-            {
-                AddSemesterToTranscript();
-                //If valid, write it to the input transcript, then calculate output
-                CalculateOutput();
-            }
-            else
-            {
-                //prompt user to complete input
-            }
+            CalculateOutput();
         }
 
         private void grdCourseDisplay_CellValueChanged(object sender, DataGridViewCellEventArgs e)

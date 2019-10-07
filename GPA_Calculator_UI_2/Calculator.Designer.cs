@@ -155,7 +155,10 @@
             // 
             this.lbxSemesters.FormattingEnabled = true;
             this.lbxSemesters.Items.AddRange(new object[] {
-            "Semester 1"});
+            "Semester 1",
+            "Semester 2",
+            "Semester 3",
+            "Semester 4"});
             this.lbxSemesters.Location = new System.Drawing.Point(69, 331);
             this.lbxSemesters.Name = "lbxSemesters";
             this.lbxSemesters.Size = new System.Drawing.Size(120, 82);
