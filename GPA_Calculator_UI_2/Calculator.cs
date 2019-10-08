@@ -16,8 +16,8 @@ namespace GPA_Calculator_UI_2
         /*TODO LIST
          1. Add form with instructions
          2. Make input Validation more robust
-         3.
-         4.
+         3. Create Output form, send Basic outputs to it
+         4. 
 
              */
 
@@ -28,6 +28,8 @@ namespace GPA_Calculator_UI_2
             //declare fields to recieve input
         Transcript input_Transcript;
         List<DataGridView> semesterPages;
+
+        string[] outputSummaryItems;
 
         public Calculator()
         {
@@ -40,6 +42,7 @@ namespace GPA_Calculator_UI_2
             input_Transcript = new Transcript();
             semesterPages = new List<DataGridView>() { grdDisplay_Sem_1,grd_Display_Sem2,
                                                        grd_Display_Sem3, grd_Display_Sem4 };
+            outputSummaryItems = new string[4];
 
         }
         
@@ -136,18 +139,61 @@ namespace GPA_Calculator_UI_2
 
         private void btnAddSemester_Click(object sender, EventArgs e)
         {
+            //add a new page to the tabcontrol and set it's text
+            tbConSemesters.TabPages.Add(new TabPage());
+            tbConSemesters.TabPages[tbConSemesters.TabPages.Count - 1].Text = "Semester " + tbConSemesters.TabPages.Count ;
 
+            //add a datagridview to the new tabPage, 
+            DataGridView newGrid = new DataGridView();
+            
+            //add the appropriate columns to it,
+            newGrid.Columns.Add("colCourseCode" + tbConSemesters.TabCount.ToString(),"Course Code");
+            newGrid.Columns.Add("colCCreditHours" + tbConSemesters.TabCount.ToString(), "Credit Hours");
+            newGrid.Columns.Add("colPercentGrade" + tbConSemesters.TabCount.ToString(), "Grade (%)");
+            newGrid.Columns.Add("colLetterGrade" + tbConSemesters.TabCount.ToString(), "Grade (Letter)");
+            newGrid.Columns.Add("colCompleted" + tbConSemesters.TabCount.ToString(), "Completed");
+            
+            //add it to the List of available semesters,
+            semesterPages.Add(newGrid);
+
+            //add it to its parent container and dock it within for display
+            tbConSemesters.TabPages[tbConSemesters.TabPages.Count - 1].Controls.Add(newGrid);
+            newGrid.Dock = DockStyle.Fill; 
         }
+
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
+            //Calculate 
+
+
+            //Construct and Show output summary in new form
+            frmOutput outputSummary = new frmOutput(outputSummaryItems[0],outputSummaryItems[1], 
+                                                outputSummaryItems[2], outputSummaryItems[3]);
+            outputSummary.Show();
            
         }
 
+
         private void btnDelSemester_Click(object sender, EventArgs e)
         {
+            //prompt the user for confirmation of deletion
+            DialogResult delResult;
+            MessageBoxButtons messButtons = MessageBoxButtons.OKCancel;
+            string title = "Permanently Delete Semester?";
+            string message = "Are you sure you want to delete " + tbConSemesters.SelectedTab.Text + "? " +
+                "This action is permanent, and you will not be able to retrieve any data entered in the Semester.";
 
+            delResult = MessageBox.Show(message, title, messButtons);
+
+            //if they confirm, remove the page, and remove the Datagridview from the semester collection
+            if (delResult == DialogResult.OK)
+            {
+                tbConSemesters.TabPages.RemoveAt(tbConSemesters.SelectedIndex);
+                //remove from list
+            }            
         }
+
 
         private void btnTestInput_Click(object sender, EventArgs e)
         {
@@ -164,6 +210,7 @@ namespace GPA_Calculator_UI_2
             //print the transcript to file as 'original'
             Transcript.PrintTranscript(input_Transcript, "./UITESTING/original.txt");
         }
+
 
         //below events are required to allow me to read data from the cells of the dataGridViews 
         //without the user pressing a button to save their changes

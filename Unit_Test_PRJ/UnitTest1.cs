@@ -27,7 +27,7 @@ namespace Unit_Test_PRJ
 
             Transcript StartingTranscript = new Transcript(testSems, TestData.student1);
 
-            Transcript CalculatedTranscript = Transcript.CalcOutcome(StartingTranscript, targetGPA);
+            Transcript CalculatedTranscript = Transcript.CalcOutcome_Console(StartingTranscript, targetGPA);
             
             Assert.AreEqual(expectedMaxGPA, CalculatedTranscript.CumulativeGPA, 0.0000000000001, "incorrect GPA calculation");
         }
@@ -50,7 +50,7 @@ namespace Unit_Test_PRJ
 
             Transcript StartingTranscript = new Transcript(testSems, TestData.student2);
 
-            Transcript CalculatedTranscript = Transcript.CalcOutcome(StartingTranscript, targetGPA);
+            Transcript CalculatedTranscript = Transcript.CalcOutcome_Console(StartingTranscript, targetGPA);
 
             Assert.AreEqual(expectedMaxGPA, CalculatedTranscript.CumulativeGPA, 0.0000000000001, "incorrect GPA calculation");
 
