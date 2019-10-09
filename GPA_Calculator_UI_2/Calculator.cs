@@ -16,9 +16,13 @@ namespace GPA_Calculator_UI_2
         /*TODO LIST
          1. Add form with instructions
          2. Make input Validation more robust
-         3. Create Output form, send Basic outputs to it
-         4. 
+            a. add validaation for target gpa and increment
+            b. handle edge cases
+            c. make the validate transcript button fill the datagrid better
 
+         3. Create Output form, send Basic outputs to it <in progress>
+         4. Add increment to intake of data, and replace hardcoding of .10 gpa points per printout with that
+         5. Run more test cases, more unit tests
              */
 
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
@@ -29,7 +33,7 @@ namespace GPA_Calculator_UI_2
         Transcript input_Transcript;
         List<DataGridView> semesterPages;
 
-        string[] outputSummaryItems;
+        List<string> outputSummaryItems;
 
         public Calculator()
         {
@@ -42,7 +46,6 @@ namespace GPA_Calculator_UI_2
             input_Transcript = new Transcript();
             semesterPages = new List<DataGridView>() { grdDisplay_Sem_1,grd_Display_Sem2,
                                                        grd_Display_Sem3, grd_Display_Sem4 };
-            outputSummaryItems = new string[4];
 
         }
         
@@ -133,6 +136,93 @@ namespace GPA_Calculator_UI_2
             return line;
         }
 
+        public string[] CalcOutcome_Formbound(Transcript incomplete, double targetGPA)
+        {
+            //create a transcript to operate on, and print the original to file
+            Transcript.PrintTranscript(incomplete, "../test/" + incomplete.Header[5] + "/original.txt");
+            Transcript current = new Transcript(incomplete);
+            
+            //create an object to catch the output summary
+            string[] summary = new string[4];
+
+            //save the starting cumulative GPA in output summary
+            summary[2] = current.CumulativeGPA.ToString("F2");
+
+            //save the path for the output folder
+            summary[3] = "bin/test/" + current.Header[5] + "/";
+
+            //tracking variable (number of *different* Transcripts tested)
+            int numEx = 1;
+            double lastPrinted = 0.0;
+
+            //set each course at -1 (incomplete) to [%50 / D / recalc QPs]
+            for (int i = 0; i < current.CourseList.Count; i++)
+            {
+                if (current.CourseList[i].PercentGrade == -1) { current.CourseList[i].PercentGrade = 50.0; }
+            }
+            //recalculate cumulative GPA
+            current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
+
+
+            //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+            //***If GPA meets the target, print it out and save that as the minimum  
+            //(means that existing grades are high enough to pass with all 50s) 
+
+            if (current.CumulativeGPA >= targetGPA)
+            {
+                Console.WriteLine("Congrats, your existing marks are high enough to reach your goal with " +
+                    "minimum passing marks in all remaining courses");
+                Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/Calculated_minimum.txt");
+                summary[0] = current.CumulativeGPA.ToString("F2");
+            }
+            else if (Transcript.TestGraduating(current))
+            {
+                //If the transcript graduates but does not meet the target, 
+                //print it to file and set the lastPrinted tracker
+                Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/minimum.txt");
+                lastPrinted = current.CumulativeGPA;
+                summary[0] = current.CumulativeGPA.ToString("F2");
+            }
+
+            // if not at the target, loop until meeting requirements
+            while ((current.CumulativeGPA < targetGPA) && (!current.TestMaxChecked()))
+            {
+                //loop over all courses
+                for (int i = 0; i < current.CourseList.Count; i++)
+                {
+                    //ignore courses that are marked as completed (TODO deal with scenario where courses need to be repeated)
+                    if (!current.CourseList[i].Completed)
+                    {
+                        //increment one course by one letter grade
+                        current.CourseList[i].PercentGrade += 10.0;
+
+                        // recalculate and check the gpa. if meeting the target, print to file and return
+                        current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
+                        if (current.CumulativeGPA >= targetGPA)
+                        {
+                            Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/target.txt");
+                        }
+                        //otherwise, check if it graduates and surpasses the last printed by at least .10
+                        //if it does, print to file and continue checks
+                        else if ((Transcript.TestGraduating(current)) && (current.CumulativeGPA >= (lastPrinted + 0.10)))
+                        {
+                            Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/Calculated_" + numEx++ + ".txt");
+                            lastPrinted += 0.10;
+                        }
+                    }
+                }
+            }
+            Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/final.txt");
+            summary[1] = current.CumulativeGPA.ToString("F2");
+
+            //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+            //record number of attempts
+            Console.WriteLine(numEx + " cases tested");
+
+            return summary;
+
+        }
+
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
@@ -164,13 +254,17 @@ namespace GPA_Calculator_UI_2
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            //Calculate 
+            if (txtTargetGPA.Text != null)
+            {
+                //Calculate 
+                outputSummaryItems = new List<string>(
+                    CalcOutcome_Formbound(input_Transcript, double.Parse(txtTargetGPA.Text)));
 
-
-            //Construct and Show output summary in new form
-            frmOutput outputSummary = new frmOutput(outputSummaryItems[0],outputSummaryItems[1], 
-                                                outputSummaryItems[2], outputSummaryItems[3]);
-            outputSummary.Show();
+                //Construct and Show output summary in new form
+                frmOutput outputSummary = new frmOutput(outputSummaryItems[0], outputSummaryItems[1],
+                                                    outputSummaryItems[2], outputSummaryItems[3]);
+                outputSummary.Show();
+            }
            
         }
 
@@ -208,7 +302,7 @@ namespace GPA_Calculator_UI_2
                 }
             }
             //print the transcript to file as 'original'
-            Transcript.PrintTranscript(input_Transcript, "./UITESTING/original.txt");
+            // TEMP OUT, NOW PRINTING IN RESULTS BUTTON Transcript.PrintTranscript(input_Transcript, "./UITESTING/original.txt");
         }
 
 

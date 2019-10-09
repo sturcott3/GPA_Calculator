@@ -43,7 +43,13 @@ namespace GPA_Calculator_2
    
         public Transcript()
         {
-            Header = new List<string>();
+            Header = new List<string>() {
+            "Name: Guest Student",
+            "Class of: 2020",
+            "Campus: Thunder Bay",
+            "StudentId:999999999",
+            "email: guest@confederationcollege.ca",
+            "guest_01"};
             Semesters = new List<Semester>();
             CourseList = new List<Course>();
             CumulativeGPA = 0;
@@ -133,7 +139,7 @@ namespace GPA_Calculator_2
         }
 
 
-        private static double CalcCumuGPA(List<Semester> semesters)
+        public static double CalcCumuGPA(List<Semester> semesters)
         {
             double cumulativeGPA = 0;
             double creditHouraccumulator = 0;
@@ -184,7 +190,7 @@ namespace GPA_Calculator_2
             return isPassing;
         }
 
-        bool TestMaxChecked()
+        public bool TestMaxChecked()
         {
             bool allCasesChecked = true;
 
