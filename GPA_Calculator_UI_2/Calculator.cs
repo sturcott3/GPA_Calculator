@@ -13,27 +13,40 @@ namespace GPA_Calculator_UI_2
 {
     public partial class Calculator : Form
     {
-        /*TODO LIST
-         1. Add form with instructions
-         2. Make input Validation more robust
-            a. add validaation for target gpa and increment
-            b. handle edge cases
-            c. make the validate transcript button fill the datagrid better
-
-         3. Create Output form, send Basic outputs to it <in progress>
-         4. Add increment to intake of data, and replace hardcoding of .10 gpa points per printout with that
-         5. Run more test cases, more unit tests
-             */
+        /*
+         TODO 
+         - Add another form with instructions - accessed through menu
+         - Make input Validation more robust
+            - add validation for target gpa and increment
+            - make the validate transcript button fill the datagrid more fully
+         - Handle repeated courses
+         - Add increment to intake of data, and replace hardcoding of .10 gpa points per printout with that
+         - Run more test cases, more unit tests
+         - <stretch goal> handle course equivalencies 
+         - <stretch goal> handle cases where students have taken more than one program (hand in hand with equivalencies)
+         - <stretch goal> handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 
+         - <stretch goal> get input for course requirements and evaluate based on that i.e. different required numbers of electives
+         - <stretch goal> allow user to enter either letter grade or percent grade instead of requiring only percent
+        */
 
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Setup-_-_-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        
-            //declare fields to recieve input
-        Transcript input_Transcript;
-        List<DataGridView> semesterPages;
 
-        List<string> outputSummaryItems;
+        //declare fields to recieve input
+        private Transcript input_Transcript;
+        private List<DataGridView> semesterPages;
+
+
+        private List<string> outputSummaryItems;//the summary of calculation results
+        private bool isInputValid;//flag to turn on/off the calculate button based on input validity
+
+        //to hold the user input values that control calculations
+        private double targetGPA;
+        private double increment;
+
+        //to control the status strip
+        private Timer delay = new Timer();
 
         public Calculator()
         {
@@ -46,44 +59,203 @@ namespace GPA_Calculator_UI_2
             input_Transcript = new Transcript();
             semesterPages = new List<DataGridView>() { grdDisplay_Sem_1,grd_Display_Sem2,
                                                        grd_Display_Sem3, grd_Display_Sem4 };
-
+            isInputValid = false;
+            lblWarning.Text = "Please enter data, then press \"Validate Input\"";
         }
-        
+
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Non-Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        private bool ValidateSemester(List<DataGridView> semesters)
+        private bool ValidateOtherInputs()
+        {
+            bool isValid = false;
+
+            //-----targetGPA textbox-----------------------------------------------------------------------------------------------------------------
+            if (Double.TryParse(txtTargetGPA.Text, out targetGPA))
+            {
+                if (targetGPA >= 2.0 && targetGPA <= 4.0)
+                {
+                    isValid = true;
+                }
+                else
+                {
+                   lblWarning.Text = "Target GPA outside acceptable range. Please enter a valid target GPA between 2.0 and 4.0";
+                }
+            }
+            else
+            {
+                lblWarning.Text = "Target GPA input invalid. Please enter a *number* between 2.0 and 4.0";
+            }
+            //-----increment textbox-----------------------------------------------------------------------------------------------------------------
+
+            if (Double.TryParse(cbxIncrement.Text, out increment))
+            {
+                if (increment >= 0.10 && increment <= 1.0)
+                {
+                    isValid = true;
+                    txtTargetGPA.Text = String.Empty;
+                    txtTargetGPA.Select();
+                }
+                else
+                {
+                    lblWarning.Text = "Please choose one of the provided values for increment";
+                    cbxIncrement.Select();
+                }
+            }
+            return isValid;
+        }
+
+        private bool ValidateSemesters(List<DataGridView> semesterGrids)
         {//determine whether the inputs given on the currently displayed semester are valid
-         //must handle both complete and Incomplete courses/semesters
-         
+         //data type and reasonableness. Also autofills additional fields when possible.
+
+            //Throughout this method, the conditions that return true indicate bad input, and will return false immediately, 
+            //effectively short circuiting the rest of the checks. If control reaches the end of the method, the flag will 
+            //have remained in its original state, set here
             bool isValid = true;
 
-            foreach (DataGridView semester in semesters)
-            {
+            DataGridView semesterGrid;
+            double throwaway = -2.0; //default to invalid here to make sure I get input, or blank
 
-                //Handle the case where they switch to another semester without entering anything
-                if ((string)semester.Rows[0].Cells[0].Value == null)
+            //set cursor position out of datagrid to avoid user frustration from typing in the wrong cell
+            btnTestInput.Select();
+
+            //iterate over each page (Semester)
+            for (int currentPage = 0; currentPage < semesterGrids.Count; currentPage++ )
+            {
+                semesterGrid = semesterGrids[currentPage];
+
+                //clear last cell colouring and highlighting
+                foreach (DataGridViewRow row in semesterGrid.Rows)
                 {
-                    isValid = false;
-                    MessageBox.Show("Empty Semester cannot be read");
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        cell.Style.BackColor = Color.White;
+                        cell.Selected = false;
+                    }
                 }
 
-                //Check each line for minimum input (avoiding the blank line at the end with Count-1)
-                for (int i = 0; i < (semester.Rows.Count - 1); i++)
+                //Handle the case where they switch to another semester without entering anything
+                if ((string)semesterGrid.Rows[0].Cells[0].Value == null)
                 {
-                    if ((string)semester.Rows[i].Cells[0].Value == null ||
-                        (string)semester.Rows[i].Cells[1].Value == null)
+                    isValid = false;
+                    lblWarning.Text = "Empty Semester " + (currentPage+1) + " cannot be read. Please delete it if there is no data to be considered.";
+                }
+
+               //Iterate over each row of input
+                for (int currentRow = 0; currentRow < (semesterGrid.Rows.Count - 1); currentRow++)
+                {
+                    //Check each row for minimum input (avoiding the perpetually blank line at the end  of the grid with Count-1)
+                    //if there are partial inputs that stop the calculation from working, i.e. course code with no credit hours
+                    // stop validation and notify the user.
+                    if ((string)semesterGrid.Rows[currentRow].Cells[0].Value == null ||
+                        (string)semesterGrid.Rows[currentRow].Cells[1].Value == null)
                     {
-                        MessageBox.Show("Missing a required input. Each course must have at least " +
-                            "Course Code and Credit Hours filled out. To show a course as incomplete, leave " +
-                            "only the Grade(%) field blank");
+                        //indicate whats wrong
+                        lblWarning.Text = "Semester "  + (currentPage+1) + ", line " + (currentRow+1) +": " +
+                            "Minimum input not entered.";
+                        
+                        //highlight bad inputs
+                        foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                        {
+                            cell.Style.BackColor = Color.Salmon;
+                            cell.Selected = false;
+                        }
+
+                        //return control to user, but invalidate calculate button
                         isValid = false;
                         return isValid;
                     }
 
-                    if ((string)semester.Rows[i].Cells[2].Value == null)
+                    //Check Credit hours for valid input
+                    if (!double.TryParse((string)semesterGrid.Rows[currentRow].Cells[1].Value, out throwaway))
                     {
-                        semester.Rows[i].Cells[2].Value = "-1";
+                        //if input is not a double, stop validating and notify the user
+                        lblWarning.Text = "Semester " + (currentPage + 1) + ", line " + (currentRow + 1) + ": " +
+                        "Non-numeric Credit Hours input (must be 28 >> 128)";
+
+                        //highlight bad inputs
+                        foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                        {
+                            cell.Style.BackColor = Color.Salmon;
+                            cell.Selected = false;
+                        }
+                        //return control to user, but invalidate calculate button
+                        isValid = false;
+                        return isValid;
+                    }
+                    else if (throwaway > 128 || throwaway < 24)//Ensure the number is reasonable 
+                    {
+                        lblWarning.Text = "Semester " + (currentPage + 1) + ", line " + (currentRow + 1) + ": " +
+                        "Credit Hours out of range (must be 28 >> 128)";
+
+                        //highlight bad inputs
+                        foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                        {
+                            cell.Style.BackColor = Color.Salmon;
+                            cell.Selected = false;
+                        }
+                        //return control to user, but invalidate calculate button
+                        isValid = false;
+                        return isValid;
+                    }
+                    
+                    //Check Percent Grade Column for valid input
+                    if ((string)semesterGrid.Rows[currentRow].Cells[2].Value != null) //Only do further checks if not empty, 
+                    {                                                      //empty is acceptable and means Incomplete
+                        if (!double.TryParse((string)semesterGrid.Rows[currentRow].Cells[2].Value, out throwaway)) 
+                        {
+                            //if input is not a double, stop validating and notify the user
+                            lblWarning.Text = "Semester " + (currentPage + 1) + ", line " + (currentRow + 1) + ": " +
+                            "Non-numeric Grade(%) input (must be -1(incomplete) >> 100)";
+
+                            //highlight bad inputs
+                            foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                            {
+                                cell.Style.BackColor = Color.Salmon;
+                                cell.Selected = false;
+                            }
+                            //return control to user, but invalidate calculate button
+                            isValid = false;
+                            return isValid;
+                        }
+                        else if (throwaway > 100 || throwaway < -1)//Ensure the number is reasonable (i.e percent grades cant be negative)
+                        {
+                            lblWarning.Text = "Semester " + (currentPage + 1) + ", line " + (currentRow + 1) + ": " +
+                            "Grade(%) out of range (must be -1(incomplete) >> 100)";
+
+                            //highlight bad inputs
+                            foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                            {
+                                cell.Style.BackColor = Color.Salmon;
+                                cell.Selected = false;
+                            }
+                            //return control to user, but invalidate calculate button
+                            isValid = false;
+                            return isValid;
+                        }
+                    }
+
+                    //If we get past all validation, start autofill
+                    //set all incomplete courses to -1, I, and not completed
+                    if ((string)semesterGrid.Rows[currentRow].Cells[2].Value == null)
+                    {
+                        semesterGrid.Rows[currentRow].Cells[2].Value = "-1";
+                        semesterGrid.Rows[currentRow].Cells[3].Value = "I";
+                        semesterGrid.Rows[currentRow].Cells[4].Value = "Incomplete";
+                    }
+                    else
+                    {
+                        semesterGrid.Rows[currentRow].Cells[3].Value = 
+                            Course.CalcLetterGrade(Double.Parse((string)semesterGrid.Rows[currentRow].Cells[2].Value));
+                        if (double.Parse((string)semesterGrid.Rows[currentRow].Cells[2].Value) == -1)
+                        {
+                            semesterGrid.Rows[currentRow].Cells[4].Value = "Incomplete";
+                        }
+                        else
+                        {
+                            semesterGrid.Rows[currentRow].Cells[4].Value = "Complete";
+                        }
                     }
                 }
             }
@@ -254,7 +426,7 @@ namespace GPA_Calculator_UI_2
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            if (txtTargetGPA.Text != null)
+            if (isInputValid)
             {
                 //Calculate 
                 outputSummaryItems = new List<string>(
@@ -265,7 +437,10 @@ namespace GPA_Calculator_UI_2
                                                     outputSummaryItems[2], outputSummaryItems[3]);
                 outputSummary.Show();
             }
-           
+            else
+            {
+                lblWarning.Text = "Please use the Validate Form button to ensure that all inputs are acceptable.";
+            }
         }
 
 
@@ -283,7 +458,9 @@ namespace GPA_Calculator_UI_2
             //if they confirm, remove the page, and remove the Datagridview from the semester collection
             if (delResult == DialogResult.OK)
             {
+                semesterPages.RemoveAt(tbConSemesters.SelectedIndex);
                 tbConSemesters.TabPages.RemoveAt(tbConSemesters.SelectedIndex);
+                
                 //remove from list
             }            
         }
@@ -291,41 +468,58 @@ namespace GPA_Calculator_UI_2
 
         private void btnTestInput_Click(object sender, EventArgs e)
         {
-            //clear the semester list in case they puch the button more than once 
+            //clear the semester list in case they punch the button more than once in a split second - was getting duplicate inputs from this 
             input_Transcript.Semesters.Clear();
-
-            if (ValidateSemester(semesterPages))
+            lblWarning.Text = String.Empty;
+            if (ValidateSemesters(semesterPages) && ValidateOtherInputs())
             {
                 foreach (DataGridView semesterPage in semesterPages)
                 {//Get the semesters from the datagrids and put them in the transcript
                     AddSemesterToTranscript(semesterPage);
                 }
+
+                isInputValid = true;
+                lblWarning.Text = "No Warnings";
             }
-            //print the transcript to file as 'original'
-            // TEMP OUT, NOW PRINTING IN RESULTS BUTTON Transcript.PrintTranscript(input_Transcript, "./UITESTING/original.txt");
+            
         }
 
 
-        //below events are required to allow me to read data from the cells of the dataGridViews 
-        //without the user pressing a button to save their changes
+        //ValueChanged events are needed to save changes without needing a user generated event (i.e. save button), 
+        //and ollow the user to jump around without losing data. They are doubly useful to detect changes and require the user to validate (autofill)
+        //the form every time they make a change
         private void grd_Display_Sem1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             grdDisplay_Sem_1.EndEdit();
+            isInputValid = false;
         }
 
         private void grd_Display_Sem2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             grd_Display_Sem2.EndEdit();
+            isInputValid = false;
         }
 
         private void grd_Display_Sem3_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             grd_Display_Sem3.EndEdit();
+            isInputValid = false;
         }
 
         private void grd_Display_Sem4_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             grd_Display_Sem4.EndEdit();
+            isInputValid = false;
+        }
+
+        private void txtTargetGPA_TextChanged(object sender, EventArgs e)
+        {
+            isInputValid = false;
+        }
+   
+        private void txtIncrement_TextChanged(object sender, EventArgs e)
+        {
+            isInputValid = false;
         }
 
         //close the form from the menu
