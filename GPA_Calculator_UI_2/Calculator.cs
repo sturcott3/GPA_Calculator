@@ -16,11 +16,11 @@ namespace GPA_Calculator_UI_2
         /*
          TODO 
          - Add another form with instructions - accessed through menu
-         - Make input Validation more robust
-            - add validation for target gpa and increment
-            - make the validate transcript button fill the datagrid more fully
+
          - Handle repeated courses
+
          - Add increment to intake of data, and replace hardcoding of .10 gpa points per printout with that
+
          - Run more test cases, more unit tests
          - <stretch goal> handle course equivalencies 
          - <stretch goal> handle cases where students have taken more than one program (hand in hand with equivalencies)
@@ -68,39 +68,51 @@ namespace GPA_Calculator_UI_2
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         private bool ValidateOtherInputs()
         {
-            bool isValid = false;
+            //if control gets through every check, isValid will stay in its initial state
+            bool isValid = true;
 
             //-----targetGPA textbox-----------------------------------------------------------------------------------------------------------------
-            if (Double.TryParse(txtTargetGPA.Text, out targetGPA))
+            if (txtTargetGPA.Text == null || txtTargetGPA.Text == String.Empty)
             {
-                if (targetGPA >= 2.0 && targetGPA <= 4.0)
-                {
-                    isValid = true;
-                }
-                else
-                {
-                   lblWarning.Text = "Target GPA outside acceptable range. Please enter a valid target GPA between 2.0 and 4.0";
-                }
+                lblWarning.Text = "Missing target GPA. Please enter a number (2.0 >> 4.0)";
+                txtTargetGPA.Select();
+                isValid = false;
+                return isValid;
             }
-            else
-            {
-                lblWarning.Text = "Target GPA input invalid. Please enter a *number* between 2.0 and 4.0";
-            }
-            //-----increment textbox-----------------------------------------------------------------------------------------------------------------
 
-            if (Double.TryParse(cbxIncrement.Text, out increment))
+            if (!Double.TryParse(txtTargetGPA.Text, out targetGPA))
             {
-                if (increment >= 0.10 && increment <= 1.0)
-                {
-                    isValid = true;
-                    txtTargetGPA.Text = String.Empty;
-                    txtTargetGPA.Select();
-                }
-                else
-                {
-                    lblWarning.Text = "Please choose one of the provided values for increment";
-                    cbxIncrement.Select();
-                }
+
+                lblWarning.Text = "Target GPA invalid data. Must be a number (2.0 >> 4.0)";
+                txtTargetGPA.Select();
+                isValid = false;
+                return isValid;
+
+            }
+            
+            if (targetGPA < 2.0 || targetGPA > 4.0)
+            {
+                lblWarning.Text = "Target GPA out of range. Must be a number (2.0 >> 4.0)";
+                txtTargetGPA.Select();
+                isValid = false;
+                return isValid;
+            }
+
+            //-----increment textbox-----------------------------------------------------------------------------------------------------------------
+            if (!Double.TryParse(cbxIncrement.Text, out increment))
+            {
+                lblWarning.Text = "Increment out of range. Please choose one of the available values.";
+                cbxIncrement.Select();
+                isValid = false;
+                return isValid;
+            }
+
+            if (increment != 0.25 && increment != 0.50 && increment != 1.0 && increment != 0.10)
+            {
+                lblWarning.Text = "Increment out of range. Please choose one of the available values.";
+                cbxIncrement.Select();
+                isValid = false;
+                return isValid;
             }
             return isValid;
         }
@@ -308,7 +320,7 @@ namespace GPA_Calculator_UI_2
             return line;
         }
 
-        public string[] CalcOutcome_Formbound(Transcript incomplete, double targetGPA)
+        public string[] CalcOutcome_Formbound(Transcript incomplete, double targetGPA, double increment)
         {
             //create a transcript to operate on, and print the original to file
             Transcript.PrintTranscript(incomplete, "../test/" + incomplete.Header[5] + "/original.txt");
@@ -376,10 +388,10 @@ namespace GPA_Calculator_UI_2
                         }
                         //otherwise, check if it graduates and surpasses the last printed by at least .10
                         //if it does, print to file and continue checks
-                        else if ((Transcript.TestGraduating(current)) && (current.CumulativeGPA >= (lastPrinted + 0.10)))
+                        else if ((Transcript.TestGraduating(current)) && (current.CumulativeGPA >= (lastPrinted + increment)))
                         {
                             Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/Calculated_" + numEx++ + ".txt");
-                            lastPrinted += 0.10;
+                            lastPrinted += increment;
                         }
                     }
                 }
@@ -429,8 +441,7 @@ namespace GPA_Calculator_UI_2
             if (isInputValid)
             {
                 //Calculate 
-                outputSummaryItems = new List<string>(
-                    CalcOutcome_Formbound(input_Transcript, double.Parse(txtTargetGPA.Text)));
+                outputSummaryItems = new List<string>(CalcOutcome_Formbound(input_Transcript, targetGPA, increment));
 
                 //Construct and Show output summary in new form
                 frmOutput outputSummary = new frmOutput(outputSummaryItems[0], outputSummaryItems[1],
