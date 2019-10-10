@@ -18,10 +18,16 @@ namespace GPA_Calculator_UI_2
          - Add another form with instructions - accessed through menu
 
          - Handle repeated courses
-
-         - Add increment to intake of data, and replace hardcoding of .10 gpa points per printout with that
+            - change every cumulative/graduating test to operate only on Transcript.CourseList, and not Transcript.Semesters.Courses
+            - test to ensure GPA calculations are accurate
+            - test to ensure that transcript still prints properly
+            - add a column to the form to display included/not included
 
          - Run more test cases, more unit tests
+
+         - Change SetupCourseList to be an instance method
+         - Change CalcCumuGPA to be an instance method
+
          - <stretch goal> handle course equivalencies 
          - <stretch goal> handle cases where students have taken more than one program (hand in hand with equivalencies)
          - <stretch goal> handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 
@@ -29,9 +35,9 @@ namespace GPA_Calculator_UI_2
          - <stretch goal> allow user to enter either letter grade or percent grade instead of requiring only percent
         */
 
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Setup-_-_-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Setup-_-_-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 
         //declare fields to recieve input
         private Transcript input_Transcript;
@@ -63,15 +69,15 @@ namespace GPA_Calculator_UI_2
             lblWarning.Text = "Please enter data, then press \"Validate Input\"";
         }
 
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Non-Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Non-Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
         private bool ValidateOtherInputs()
         {
             //if control gets through every check, isValid will stay in its initial state
             bool isValid = true;
 
-            //-----targetGPA textbox-----------------------------------------------------------------------------------------------------------------
+            //-----targetGPA textbox-------------------------------------------------------------------------------------------------------
             if (txtTargetGPA.Text == null || txtTargetGPA.Text == String.Empty)
             {
                 lblWarning.Text = "Missing target GPA. Please enter a number (2.0 >> 4.0)";
@@ -98,7 +104,7 @@ namespace GPA_Calculator_UI_2
                 return isValid;
             }
 
-            //-----increment textbox-----------------------------------------------------------------------------------------------------------------
+            //-----increment textbox-------------------------------------------------------------------------------------------------------
             if (!Double.TryParse(cbxIncrement.Text, out increment))
             {
                 lblWarning.Text = "Increment out of range. Please choose one of the available values.";
@@ -345,10 +351,9 @@ namespace GPA_Calculator_UI_2
                 if (current.CourseList[i].PercentGrade == -1) { current.CourseList[i].PercentGrade = 50.0; }
             }
             //recalculate cumulative GPA
-            current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
+            current.CumulativeGPA = Transcript.CalcCumuGPA(current.CourseList);
 
-
-            //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+            //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
             //***If GPA meets the target, print it out and save that as the minimum  
             //(means that existing grades are high enough to pass with all 50s) 
 
@@ -381,7 +386,7 @@ namespace GPA_Calculator_UI_2
                         current.CourseList[i].PercentGrade += 10.0;
 
                         // recalculate and check the gpa. if meeting the target, print to file and return
-                        current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
+                        current.CumulativeGPA = Transcript.CalcCumuGPA(current.CourseList);
                         if (current.CumulativeGPA >= targetGPA)
                         {
                             Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/target.txt");
@@ -399,7 +404,7 @@ namespace GPA_Calculator_UI_2
             Transcript.PrintTranscript(current, "../test/" + current.Header[5] + "/final.txt");
             summary[1] = current.CumulativeGPA.ToString("F2");
 
-            //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+            //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
             //record number of attempts
             Console.WriteLine(numEx + " cases tested");
 
@@ -407,9 +412,9 @@ namespace GPA_Calculator_UI_2
 
         }
 
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_Event Methods_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 
         private void btnAddSemester_Click(object sender, EventArgs e)
         {
@@ -470,8 +475,7 @@ namespace GPA_Calculator_UI_2
             if (delResult == DialogResult.OK)
             {
                 semesterPages.RemoveAt(tbConSemesters.SelectedIndex);
-                tbConSemesters.TabPages.RemoveAt(tbConSemesters.SelectedIndex);
-                
+                tbConSemesters.TabPages.RemoveAt(tbConSemesters.SelectedIndex);  
                 //remove from list
             }            
         }
@@ -489,13 +493,12 @@ namespace GPA_Calculator_UI_2
                     AddSemesterToTranscript(semesterPage);
                 }
 
+                input_Transcript.CourseList = Transcript.SetupCourseList(input_Transcript.Semesters);
                 isInputValid = true;
                 lblWarning.Text = "No Warnings";
             }
-            
         }
-
-
+        
         //ValueChanged events are needed to save changes without needing a user generated event (i.e. save button), 
         //and ollow the user to jump around without losing data. They are doubly useful to detect changes and require the user to validate (autofill)
         //the form every time they make a change

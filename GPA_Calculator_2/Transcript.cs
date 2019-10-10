@@ -13,36 +13,36 @@ namespace GPA_Calculator_2
 {
     public class Transcript
     {
-        //-_-_Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+//-_-_Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 
         public List<Semester> Semesters { get; set; }
         public List<Course> CourseList { get; set; }
         public double CumulativeGPA { get; set; }
         public List<string> Header { get; set; }
 
-        //-_-_End Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-        //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-        //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-        //-_-_Constructors-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+//-_-_End Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+//-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+//-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+//-_-_Constructors-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 
         public Transcript(List<Semester> semesters, List<string> studentInfo)
         {//to instantiate from an existing list (static data sets in TestData.cs passed in Semester Constructor)
             Header = new List<string>(studentInfo);
             Semesters = new List<Semester>(semesters);
-            CourseList = Transcript.SetupCourseList(semesters);
-            CumulativeGPA = CalcCumuGPA(Semesters);
+            CourseList = SetupCourseList(semesters);
+            CumulativeGPA = CalcCumuGPA(CourseList);
         }
 
         public Transcript(Transcript other)
         {//to instantiate from an existing semester (copy existing)
             Header = new List<string>(other.Header);
             Semesters = new List<Semester>(other.Semesters);
-            CourseList = Transcript.SetupCourseList(Semesters);
-            CumulativeGPA = CalcCumuGPA(Semesters);
+            CourseList = SetupCourseList(Semesters);
+            CumulativeGPA = CalcCumuGPA(CourseList);
         }
    
         public Transcript()
-        {
+        {//no-arg constructor to set default values until I add functionality to intake user data
             Header = new List<string>() {
             "Name: Guest Student",
             "Class of: 2020",
@@ -55,14 +55,14 @@ namespace GPA_Calculator_2
             CumulativeGPA = 0;
         }
 
-        //-_-_End Constructors-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-        //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-        //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-        //-_-_Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+//-_-_End Constructors-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+//-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+//-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+//-_-_Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
         public static Transcript CalcOutcome_Console(Transcript incomplete, double targetGPA)
         {
-            //-_-Setup_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+            //-_-Setup_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
             //create a transcript to operate on, and print the original to file
             PrintTranscript(incomplete, "../test/" + incomplete.Header[5] + "/original.txt");
             Transcript current  = new Transcript(incomplete);
@@ -77,10 +77,10 @@ namespace GPA_Calculator_2
                 if (current.CourseList[i].PercentGrade == -1) { current.CourseList[i].PercentGrade = 50.0; } 
             }
             //recalculate cumulative GPA
-            current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
+            current.CumulativeGPA = Transcript.CalcCumuGPA(current.CourseList);
 
 
-            //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+            //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-__-_-_-_-_-_-
             //***If GPA meets the target, print it out and return 
             //(means that existing grades are high enough to pass with all 50s) 
 
@@ -98,7 +98,7 @@ namespace GPA_Calculator_2
                 lastPrinted = current.CumulativeGPA;
             }
 
-            //Iterative Checks_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+            //Iterative Checks_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
             // if not at the target, loop until meeting requirements
             while ((current.CumulativeGPA < targetGPA) && (!current.TestMaxChecked()))
             {
@@ -112,7 +112,7 @@ namespace GPA_Calculator_2
                         current.CourseList[i].PercentGrade += 10.0;
 
                         // recalculate and check the gpa. if meeting the target, print to file and return
-                        current.CumulativeGPA = Transcript.CalcCumuGPA(current.Semesters);
+                        current.CumulativeGPA = Transcript.CalcCumuGPA(current.CourseList);
                         if (current.CumulativeGPA >= targetGPA)
                         {
                             PrintTranscript(current, "../test/"+current.Header[5]+"/final.txt");
@@ -130,7 +130,7 @@ namespace GPA_Calculator_2
             }
             PrintTranscript(current, "../test/" + current.Header[5] + "/final.txt");
 
-            //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+            //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-__-_-_-_-_-_-_-_-__
             //record number of attempts
             Console.WriteLine(numEx + " cases tested");
 
@@ -139,21 +139,18 @@ namespace GPA_Calculator_2
         }
 
 
-        public static double CalcCumuGPA(List<Semester> semesters)
+        public static double CalcCumuGPA(List<Course> courseList)
         {
             double cumulativeGPA = 0;
             double creditHouraccumulator = 0;
             double qualityPointAccumulator = 0;
-
-            foreach (Semester singleSemester in semesters)
+            
+            foreach (Course singleCourse in courseList)
             {
-                foreach (Course singleCourse in singleSemester.Courses)
+                if (singleCourse.PercentGrade != -1)
                 {
-                    if (singleCourse.PercentGrade != -1)
-                    {
-                        creditHouraccumulator += singleCourse.CreditHours;
-                        qualityPointAccumulator += singleCourse.QualityPoints;
-                    }
+                    creditHouraccumulator += singleCourse.CreditHours;
+                    qualityPointAccumulator += singleCourse.QualityPoints;
                 }
             }
 
@@ -169,19 +166,17 @@ namespace GPA_Calculator_2
             bool isPassing = true;
 
             //check that each course has a passing grade
-            foreach (Semester singleSemester in transcript.Semesters)
-            {
-                foreach (Course singleCourse in singleSemester.Courses)
+
+                foreach (Course singleCourse in transcript.CourseList)
                 {
                     if (singleCourse.PercentGrade < 50)
                     {
                         isPassing = false;
                     }
                 }
-            }
-
+            
             //check that cumulative GPA is acceptable
-            if (CalcCumuGPA(transcript.Semesters) < 2.0)
+            if (CalcCumuGPA(transcript.CourseList) < 2.0)
             {
                 isPassing = false;
             }
@@ -205,19 +200,40 @@ namespace GPA_Calculator_2
             return allCasesChecked;
         }
 
-        //gather all courses in all semesters in a single list to facilitate easier iteration in other transcript methods 
-        static List<Course> SetupCourseList(List<Semester> semesters)
+        //gather all courses in all semesters in a single list 
+        //this list should only contain the highest of each course (by course code for now)
+        public static List<Course> SetupCourseList(List<Semester> semesters)
         {
             List<Course> fullCourseList = new List<Course>();
+            fullCourseList.Add(semesters[0].Courses[0]);
 
             foreach (Semester singleSemester in semesters)
             {
                 foreach (Course singleCourse in singleSemester.Courses)
                 {
-                    fullCourseList.Add(singleCourse);
+                    //look at each course, and compare it's code to each course already recorded
+                    for (int idx = 0; idx < fullCourseList.Count; idx++)
+                    {
+                        //if the course codes are equal, 
+                        if (singleCourse.Code.Equals(fullCourseList[idx].Code))
+                        {
+                            //compare the marks, 
+                            if (singleCourse.PercentGrade > fullCourseList[idx].PercentGrade)
+                            {
+                                //if the new one is higher, keep it
+                                fullCourseList.RemoveAt(idx);
+                                fullCourseList.Add(singleCourse);
+                            }
+                        }
+                        //if the list does not contain a course with the same code
+                        else
+                        {
+                            //add it to the list
+                            fullCourseList.Add(singleCourse);
+                        }
+                    }
                 }
             }
-
             return fullCourseList;
         }
 
@@ -260,7 +276,7 @@ namespace GPA_Calculator_2
             outputFile.Close();
         }
 
-        //-_-_End Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        //-_-_End Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 
     }
