@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grdDisplay_Sem_1 = new System.Windows.Forms.DataGridView();
             this.colCourseCode_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCreditHours_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,10 +46,6 @@
             this.btnAddSemester = new System.Windows.Forms.Button();
             this.btnDelSemester = new System.Windows.Forms.Button();
             this.btnCalculate = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.radNotPrintToFile = new System.Windows.Forms.RadioButton();
-            this.radPrintToFile = new System.Windows.Forms.RadioButton();
             this.tbConSemesters = new System.Windows.Forms.TabControl();
             this.tabSemester1 = new System.Windows.Forms.TabPage();
             this.tabSemester2 = new System.Windows.Forms.TabPage();
@@ -78,7 +75,6 @@
             this.lblWarning = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplay_Sem_1)).BeginInit();
             this.mnuMain.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.tbConSemesters.SuspendLayout();
             this.tabSemester1.SuspendLayout();
             this.tabSemester2.SuspendLayout();
@@ -92,6 +88,15 @@
             // 
             // grdDisplay_Sem_1
             // 
+            this.grdDisplay_Sem_1.BackgroundColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grdDisplay_Sem_1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grdDisplay_Sem_1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grdDisplay_Sem_1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colCourseCode_1,
@@ -136,6 +141,7 @@
             // 
             // mnuMain
             // 
+            this.mnuMain.BackColor = System.Drawing.Color.White;
             this.mnuMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuMainFile,
@@ -204,74 +210,37 @@
             // 
             // btnAddSemester
             // 
+            this.btnAddSemester.BackColor = System.Drawing.SystemColors.Control;
             this.btnAddSemester.Location = new System.Drawing.Point(12, 315);
             this.btnAddSemester.Name = "btnAddSemester";
             this.btnAddSemester.Size = new System.Drawing.Size(97, 44);
             this.btnAddSemester.TabIndex = 8;
             this.btnAddSemester.Text = "Add Another Semester";
-            this.btnAddSemester.UseVisualStyleBackColor = true;
+            this.btnAddSemester.UseVisualStyleBackColor = false;
             this.btnAddSemester.Click += new System.EventHandler(this.btnAddSemester_Click);
             // 
             // btnDelSemester
             // 
+            this.btnDelSemester.BackColor = System.Drawing.SystemColors.Control;
             this.btnDelSemester.Location = new System.Drawing.Point(12, 365);
             this.btnDelSemester.Name = "btnDelSemester";
             this.btnDelSemester.Size = new System.Drawing.Size(97, 41);
             this.btnDelSemester.TabIndex = 9;
             this.btnDelSemester.Text = "Delete Current Semester";
-            this.btnDelSemester.UseVisualStyleBackColor = true;
+            this.btnDelSemester.UseVisualStyleBackColor = false;
             this.btnDelSemester.Click += new System.EventHandler(this.btnDelSemester_Click);
             // 
             // btnCalculate
             // 
+            this.btnCalculate.BackColor = System.Drawing.SystemColors.Control;
             this.btnCalculate.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnCalculate.Location = new System.Drawing.Point(399, 354);
             this.btnCalculate.Name = "btnCalculate";
             this.btnCalculate.Size = new System.Drawing.Size(160, 52);
             this.btnCalculate.TabIndex = 10;
             this.btnCalculate.Text = "Calculate Outcomes";
-            this.btnCalculate.UseVisualStyleBackColor = true;
+            this.btnCalculate.UseVisualStyleBackColor = false;
             this.btnCalculate.Click += new System.EventHandler(this.btnCalculate_Click);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.radNotPrintToFile);
-            this.panel1.Controls.Add(this.radPrintToFile);
-            this.panel1.Location = new System.Drawing.Point(198, 354);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(195, 52);
-            this.panel1.TabIndex = 11;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(13, 20);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 23);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Print Results to file?";
-            // 
-            // radNotPrintToFile
-            // 
-            this.radNotPrintToFile.AutoSize = true;
-            this.radNotPrintToFile.Location = new System.Drawing.Point(129, 28);
-            this.radNotPrintToFile.Name = "radNotPrintToFile";
-            this.radNotPrintToFile.Size = new System.Drawing.Size(39, 17);
-            this.radNotPrintToFile.TabIndex = 1;
-            this.radNotPrintToFile.TabStop = true;
-            this.radNotPrintToFile.Text = "No";
-            this.radNotPrintToFile.UseVisualStyleBackColor = true;
-            // 
-            // radPrintToFile
-            // 
-            this.radPrintToFile.AutoSize = true;
-            this.radPrintToFile.Location = new System.Drawing.Point(129, 9);
-            this.radPrintToFile.Name = "radPrintToFile";
-            this.radPrintToFile.Size = new System.Drawing.Size(43, 17);
-            this.radPrintToFile.TabIndex = 0;
-            this.radPrintToFile.TabStop = true;
-            this.radPrintToFile.Text = "Yes";
-            this.radPrintToFile.UseVisualStyleBackColor = true;
             // 
             // tbConSemesters
             // 
@@ -287,6 +256,7 @@
             // 
             // tabSemester1
             // 
+            this.tabSemester1.BackColor = System.Drawing.Color.White;
             this.tabSemester1.Controls.Add(this.grdDisplay_Sem_1);
             this.tabSemester1.Location = new System.Drawing.Point(4, 22);
             this.tabSemester1.Name = "tabSemester1";
@@ -294,10 +264,10 @@
             this.tabSemester1.Size = new System.Drawing.Size(539, 255);
             this.tabSemester1.TabIndex = 0;
             this.tabSemester1.Text = "Semester 1";
-            this.tabSemester1.UseVisualStyleBackColor = true;
             // 
             // tabSemester2
             // 
+            this.tabSemester2.BackColor = System.Drawing.Color.White;
             this.tabSemester2.Controls.Add(this.grd_Display_Sem2);
             this.tabSemester2.Location = new System.Drawing.Point(4, 22);
             this.tabSemester2.Name = "tabSemester2";
@@ -305,10 +275,10 @@
             this.tabSemester2.Size = new System.Drawing.Size(539, 255);
             this.tabSemester2.TabIndex = 1;
             this.tabSemester2.Text = "Semester 2";
-            this.tabSemester2.UseVisualStyleBackColor = true;
             // 
             // grd_Display_Sem2
             // 
+            this.grd_Display_Sem2.BackgroundColor = System.Drawing.Color.White;
             this.grd_Display_Sem2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grd_Display_Sem2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colCourseCode_2,
@@ -353,16 +323,17 @@
             // 
             // tabSemester3
             // 
+            this.tabSemester3.BackColor = System.Drawing.Color.White;
             this.tabSemester3.Controls.Add(this.grd_Display_Sem3);
             this.tabSemester3.Location = new System.Drawing.Point(4, 22);
             this.tabSemester3.Name = "tabSemester3";
             this.tabSemester3.Size = new System.Drawing.Size(539, 255);
             this.tabSemester3.TabIndex = 2;
             this.tabSemester3.Text = "Semester 3";
-            this.tabSemester3.UseVisualStyleBackColor = true;
             // 
             // grd_Display_Sem3
             // 
+            this.grd_Display_Sem3.BackgroundColor = System.Drawing.Color.White;
             this.grd_Display_Sem3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grd_Display_Sem3.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colCourseCode_3,
@@ -407,16 +378,17 @@
             // 
             // tabSemester4
             // 
+            this.tabSemester4.BackColor = System.Drawing.Color.White;
             this.tabSemester4.Controls.Add(this.grd_Display_Sem4);
             this.tabSemester4.Location = new System.Drawing.Point(4, 22);
             this.tabSemester4.Name = "tabSemester4";
             this.tabSemester4.Size = new System.Drawing.Size(539, 255);
             this.tabSemester4.TabIndex = 3;
             this.tabSemester4.Text = "Semester 4";
-            this.tabSemester4.UseVisualStyleBackColor = true;
             // 
             // grd_Display_Sem4
             // 
+            this.grd_Display_Sem4.BackgroundColor = System.Drawing.Color.White;
             this.grd_Display_Sem4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grd_Display_Sem4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colCourseCode_4,
@@ -461,12 +433,13 @@
             // 
             // btnTestInput
             // 
+            this.btnTestInput.BackColor = System.Drawing.SystemColors.Control;
             this.btnTestInput.Location = new System.Drawing.Point(116, 315);
             this.btnTestInput.Name = "btnTestInput";
             this.btnTestInput.Size = new System.Drawing.Size(73, 91);
             this.btnTestInput.TabIndex = 13;
             this.btnTestInput.Text = "Validate Input";
-            this.btnTestInput.UseVisualStyleBackColor = true;
+            this.btnTestInput.UseVisualStyleBackColor = false;
             this.btnTestInput.Click += new System.EventHandler(this.btnTestInput_Click);
             // 
             // cbxIncrement
@@ -482,9 +455,11 @@
             this.cbxIncrement.Size = new System.Drawing.Size(97, 21);
             this.cbxIncrement.TabIndex = 14;
             this.cbxIncrement.Text = "0.25";
+            this.cbxIncrement.SelectedIndexChanged += new System.EventHandler(this.cbxIncrement_SelectedIndexChanged);
             // 
             // statusStrip1
             // 
+            this.statusStrip1.BackColor = System.Drawing.Color.White;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblWarning});
             this.statusStrip1.Location = new System.Drawing.Point(0, 423);
@@ -503,12 +478,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(567, 445);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.cbxIncrement);
             this.Controls.Add(this.btnTestInput);
             this.Controls.Add(this.tbConSemesters);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnCalculate);
             this.Controls.Add(this.btnDelSemester);
             this.Controls.Add(this.btnAddSemester);
@@ -524,8 +499,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplay_Sem_1)).EndInit();
             this.mnuMain.ResumeLayout(false);
             this.mnuMain.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.tbConSemesters.ResumeLayout(false);
             this.tabSemester1.ResumeLayout(false);
             this.tabSemester2.ResumeLayout(false);
@@ -553,10 +526,6 @@
         private System.Windows.Forms.Button btnAddSemester;
         private System.Windows.Forms.Button btnDelSemester;
         private System.Windows.Forms.Button btnCalculate;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.RadioButton radNotPrintToFile;
-        private System.Windows.Forms.RadioButton radPrintToFile;
         private System.Windows.Forms.TabControl tbConSemesters;
         private System.Windows.Forms.TabPage tabSemester1;
         private System.Windows.Forms.TabPage tabSemester2;

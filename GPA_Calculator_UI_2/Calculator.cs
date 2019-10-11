@@ -15,19 +15,21 @@ namespace GPA_Calculator_UI_2
     {
         /*
          TODO 
-         - Add another form with instructions - accessed through menu
+         - Add another form with instructions - accessed through menu 
+         
+         - Improve output (.csv), better summary
 
-         - Handle repeated courses
-            - test to ensure GPA calculations are accurate
-            - add a column to the form to display included/excluded
-
-         - Run more test cases, more unit tests
-
-         - <stretch goal> handle course equivalencies 
-         - <stretch goal> handle cases where students have taken more than one program (hand in hand with equivalencies)
-         - <stretch goal> handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 
-         - <stretch goal> get input for course requirements and evaluate based on that i.e. different required numbers of electives
-         - <stretch goal> allow user to enter either letter grade or percent grade instead of requiring only percent
+         - Run more test cases/more unit tests
+            - a test to ensure GPA calculations are accurate with many repeated courses
+            - a test to ensure transcript printout is accurate even with repeated courses
+            - a test to demonstrate what happens with input that cant graduate
+         
+         - <stretch goal> Handle course equivalencies 
+         - <stretch goal> Handle cases where students have taken more than one program (need equivalencies for this)
+         - <stretch goal> Handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 
+         - <stretch goal> Get input for course requirements and evaluate based on that i.e. different required numbers of electives
+         - <stretch goal> Allow user to enter either letter grade or percent grade instead of requiring only percent
+         - <stretch goal> Add a column to the input form to display included/excluded
         */
 
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
@@ -254,8 +256,7 @@ namespace GPA_Calculator_UI_2
         }
 
         private void AutoFill(List<DataGridView> semesterGrids)
-        {
-
+        {//should only be called after input is validated
             foreach (DataGridView semesterGrid in semesterGrids)
             {
                 for (int currentRow = 0; currentRow < (semesterGrid.Rows.Count - 1); currentRow++)
@@ -267,6 +268,11 @@ namespace GPA_Calculator_UI_2
                         semesterGrid.Rows[currentRow].Cells[2].Value = "-1";
                         semesterGrid.Rows[currentRow].Cells[3].Value = "I";
                         semesterGrid.Rows[currentRow].Cells[4].Value = "Incomplete";
+
+                        foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                        {//color incomplete rows light blue to indicate they will be calculated
+                            cell.Style.BackColor = Color.CornflowerBlue;
+                        }
                     }
                     else
                     {
@@ -276,10 +282,29 @@ namespace GPA_Calculator_UI_2
                         if (double.Parse((string)semesterGrid.Rows[currentRow].Cells[2].Value) == -1)
                         {
                             semesterGrid.Rows[currentRow].Cells[4].Value = "Incomplete";
+
+                            foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                            {//color incomplete rows light blue to indicate they will be calculated
+                                cell.Style.BackColor = Color.CornflowerBlue;
+                            }
                         }
                         else
                         {
                             semesterGrid.Rows[currentRow].Cells[4].Value = "Complete";
+
+                            foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                            {//color complete rows light green to indicate they will not be touched
+                                cell.Style.BackColor = Color.LightSeaGreen;
+                            }
+                        }
+                    }
+                    
+                    if (double.Parse((string)semesterGrid.Rows[currentRow].Cells[2].Value) < 50.0 &&
+                        double.Parse((string)semesterGrid.Rows[currentRow].Cells[2].Value) != -1)
+                    {
+                        foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
+                        {//color failed courses yellow to show they will cause the transcript to fail unless they have been repeated
+                            cell.Style.BackColor = Color.LightYellow;
                         }
                     }
                 }
@@ -314,7 +339,6 @@ namespace GPA_Calculator_UI_2
                 //add the course to the courselist for the semester
                 tempCourseList.Add(tempCourse);
             }
-
             //add the Semester to the transcript
             input_Transcript.Semesters.Add(new Semester(tempCourseList));
         }
@@ -487,8 +511,8 @@ namespace GPA_Calculator_UI_2
 
         private void btnTestInput_Click(object sender, EventArgs e)
         {
-            //clear the semester list in case they punch the button more than once in a split second - was getting duplicate inputs from this 
-            input_Transcript.Semesters.Clear();
+            //clear the transcript in case they punch the button more than once 
+            input_Transcript = new Transcript();
             lblWarning.Text = String.Empty;
 
             //Call input validation
@@ -544,11 +568,6 @@ namespace GPA_Calculator_UI_2
         {
             isInputValid = false;
         }
-   
-        private void txtIncrement_TextChanged(object sender, EventArgs e)
-        {
-            isInputValid = false;
-        }
 
         //close the form from the menu
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -559,6 +578,11 @@ namespace GPA_Calculator_UI_2
         private void instructionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("TODO : Add form with instructions");
+        }
+
+        private void cbxIncrement_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            isInputValid = false;
         }
     }
 }
