@@ -19,6 +19,7 @@ namespace GPA_Calculator_2
         public bool Completed { get; set; }
         public char LetterGrade { get; set; }
         public double QualityPoints { get; set; }
+        public string Included { get; set; }
 
         //Only need to expose the backing field for this property to allow added logic in the setter
         private double percentGrade;

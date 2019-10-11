@@ -29,16 +29,16 @@ namespace GPA_Calculator_2
         {//to instantiate from an existing list (static data sets in TestData.cs passed in Semester Constructor)
             Header = new List<string>(studentInfo);
             Semesters = new List<Semester>(semesters);
-            CourseList = SetupCourseList(semesters);
-            CumulativeGPA = CalcCumuGPA(CourseList);
+            SetupCourseList();
+            CalcCumuGPA();
         }
 
         public Transcript(Transcript other)
         {//to instantiate from an existing semester (copy existing)
             Header = new List<string>(other.Header);
             Semesters = new List<Semester>(other.Semesters);
-            CourseList = SetupCourseList(Semesters);
-            CumulativeGPA = CalcCumuGPA(CourseList);
+            SetupCourseList();
+            CalcCumuGPA();
         }
    
         public Transcript()
@@ -77,7 +77,7 @@ namespace GPA_Calculator_2
                 if (current.CourseList[i].PercentGrade == -1) { current.CourseList[i].PercentGrade = 50.0; } 
             }
             //recalculate cumulative GPA
-            current.CumulativeGPA = Transcript.CalcCumuGPA(current.CourseList);
+            current.CalcCumuGPA();
 
 
             //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-__-_-_-_-_-_-
@@ -92,7 +92,7 @@ namespace GPA_Calculator_2
             }
 
             //If the transcript graduates, print it to file and set the lastPrinted tracker
-            if (TestGraduating(current))
+            if (current.TestGraduating())
             {
                 PrintTranscript(current, "../test/" + current.Header[5] + "/minimum.txt");
                 lastPrinted = current.CumulativeGPA;
@@ -112,7 +112,7 @@ namespace GPA_Calculator_2
                         current.CourseList[i].PercentGrade += 10.0;
 
                         // recalculate and check the gpa. if meeting the target, print to file and return
-                        current.CumulativeGPA = Transcript.CalcCumuGPA(current.CourseList);
+                        current.CalcCumuGPA();
                         if (current.CumulativeGPA >= targetGPA)
                         {
                             PrintTranscript(current, "../test/"+current.Header[5]+"/final.txt");
@@ -120,7 +120,7 @@ namespace GPA_Calculator_2
                         }
                         //otherwise, check if it graduates and surpasses the last printed by at least .10
                         //if it does, print to file and continue checks
-                        else if ((TestGraduating(current)) && (current.CumulativeGPA >= (lastPrinted + 0.10)))
+                        else if ((current.TestGraduating()) && (current.CumulativeGPA >= (lastPrinted + 0.10)))
                         {
                             PrintTranscript(current, "../test/" + current.Header[5] + "/Calculated_" + numEx++ + ".txt");
                             lastPrinted += 0.10;
@@ -139,13 +139,12 @@ namespace GPA_Calculator_2
         }
 
 
-        public static double CalcCumuGPA(List<Course> courseList)
+        public void CalcCumuGPA()
         {
-            double cumulativeGPA = 0;
             double creditHouraccumulator = 0;
             double qualityPointAccumulator = 0;
             
-            foreach (Course singleCourse in courseList)
+            foreach (Course singleCourse in CourseList)
             {
                 if (singleCourse.PercentGrade != -1)
                 {
@@ -153,21 +152,18 @@ namespace GPA_Calculator_2
                     qualityPointAccumulator += singleCourse.QualityPoints;
                 }
             }
-
-            cumulativeGPA = qualityPointAccumulator / creditHouraccumulator;
-
-            return cumulativeGPA;
+            CumulativeGPA = qualityPointAccumulator / creditHouraccumulator;
         }
         
         //test a single transcript to see whether it is eligible for graduation
-        public static bool TestGraduating(Transcript transcript)
+        public bool TestGraduating()
         {
             //start with flag set to passing
             bool isPassing = true;
 
             //check that each course has a passing grade
 
-                foreach (Course singleCourse in transcript.CourseList)
+                foreach (Course singleCourse in CourseList)
                 {
                     if (singleCourse.PercentGrade < 50)
                     {
@@ -176,7 +172,7 @@ namespace GPA_Calculator_2
                 }
             
             //check that cumulative GPA is acceptable
-            if (CalcCumuGPA(transcript.CourseList) < 2.0)
+            if (CumulativeGPA < 2.0)
             {
                 isPassing = false;
             }
@@ -202,40 +198,46 @@ namespace GPA_Calculator_2
 
         //gather all courses in all semesters in a single list 
         //this list should only contain the highest of each course (by course code for now)
-        public static List<Course> SetupCourseList(List<Semester> semesters)
+        public void SetupCourseList()
         {
-            List<Course> fullCourseList = new List<Course>();
-            fullCourseList.Add(semesters[0].Courses[0]);
+            CourseList = new List<Course>();
+            CourseList.Clear();
 
-            foreach (Semester singleSemester in semesters)
+            //start with every course in the Transcript
+            foreach (Semester singleSemester in Semesters)
             {
                 foreach (Course singleCourse in singleSemester.Courses)
                 {
-                    //look at each course, and compare it's code to each course already recorded
-                    for (int idx = 0; idx < fullCourseList.Count; idx++)
+                    singleCourse.Included = "IN";
+                    CourseList.Add(singleCourse);
+                }
+            }
+
+            // to get ahold of the courses one at a time, separat from the list
+            Course tester; 
+
+            for (int current = 0; current < CourseList.Count; current++)
+            {
+                tester = CourseList[current];
+
+                //look at each course, and compare it's Course Code to the tester
+                for (int idx = 0; idx < CourseList.Count; idx++)
+                {
+                    //if the course codes are equal, 
+                    if (tester.Code.Equals(CourseList[idx].Code))
                     {
-                        //if the course codes are equal, 
-                        if (singleCourse.Code.Equals(fullCourseList[idx].Code))
+                        //compare the marks, 
+                        if (tester.PercentGrade > CourseList[idx].PercentGrade)
                         {
-                            //compare the marks, 
-                            if (singleCourse.PercentGrade > fullCourseList[idx].PercentGrade)
-                            {
-                                //if the new one is higher, keep it
-                                fullCourseList.RemoveAt(idx);
-                                fullCourseList.Add(singleCourse);
-                            }
-                        }
-                        //if the list does not contain a course with the same code
-                        else
-                        {
-                            //add it to the list
-                            fullCourseList.Add(singleCourse);
+                            //if the tester is higher, get rid of the lower grade, and mark it as EXClUDED
+                            CourseList[idx].Included = "EX";
+                            CourseList.RemoveAt(idx);
                         }
                     }
                 }
             }
-            return fullCourseList;
         }
+        
 
         public static void PrintTranscript(Transcript toPrint, string filename)
         {
