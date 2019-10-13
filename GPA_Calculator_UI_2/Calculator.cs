@@ -16,13 +16,13 @@ namespace GPA_Calculator_UI_2
         /*
          TODO 
          - Add another form with instructions - accessed through menu 
-         
-         - Improve output, better summaries
 
          - Run more test cases/more unit tests
             - a test to ensure GPA calculations are accurate with many repeated courses
             - a test to ensure transcript printout is accurate even with repeated courses
             - a test to demonstrate what happens with input that cant graduate
+
+         - Setup color coding and legend for output form
          
          - <stretch goal> Handle course equivalencies 
          - <stretch goal> Handle cases where students have taken more than one program (need equivalencies for this)
@@ -43,9 +43,7 @@ namespace GPA_Calculator_UI_2
 
 
         private string calculationSummaryItems;//the summary of calculation results
-
-        //Flag to force the user to press the validate button
-        bool inputIsAutoCompleted;
+        
 
         //to hold the user input values that control calculations
         private double targetGPA;
@@ -352,17 +350,13 @@ namespace GPA_Calculator_UI_2
 
         public string CalcOutcome_Formbound(double targetGPA, double increment)
         {
-            //TEMPORARY TEST BLOCK
+            //create the output form
             OutputForm frmOut = new OutputForm(); 
 
-            //print the original to file according to user preference
+            //print the original to file <TODO> according to user preference
             string[] temp = input_Transcript.PrintTranscript(startPath +  "\\Output\\Original.txt", PrintType.FancyText);
 
             frmOut.SetDisplayPage(TabType.Original, input_Transcript, temp);
-
-            //TEMPORARY TEST BLOCK
-            
-
 
             //create an object to catch the output summary
             string overallSummary = String.Empty;
@@ -370,16 +364,14 @@ namespace GPA_Calculator_UI_2
             //save the starting cumulative GPA in output summary
             overallSummary += "Starting Cumulative GPA: " + input_Transcript.CumulativeGPA.ToString("F2");
 
-
-
-            //tracking variable (number of *different* Transcripts tested)
+            //tracking variable (number of Transcripts printed)
             int numEx = 1;
             double lastPrinted = 0.0;
 
-            //set each course at -1 (incomplete) to [%50 / D / recalc QPs]
+            //set each course at -1 (incomplete) to [D / recalc QPs]
             for (int i = 0; i < input_Transcript.CourseList.Count; i++)
             {
-                if (input_Transcript.CourseList[i].PercentGrade == -1) { input_Transcript.CourseList[i].PercentGrade = 50.0; }
+                if (input_Transcript.CourseList[i].PercentGrade == -1) { input_Transcript.CourseList[i].LetterGrade = 'D'; }
             }
             //recalculate cumulative GPA
             input_Transcript.CalcCumuGPA();
@@ -390,18 +382,23 @@ namespace GPA_Calculator_UI_2
 
             if (input_Transcript.CumulativeGPA >= targetGPA)
             {
-               
-                input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
+                temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
                 overallSummary += "\n\n Congrats, your existing grades are high enough that with a D in all outstanding courses," +
                     " your GPA would be: " + input_Transcript.CumulativeGPA.ToString("F2");
+
+                frmOut.SetDisplayPage(TabType.Minimum, input_Transcript, temp);
             }
+
             else if (input_Transcript.TestGraduating())
             {
                 //If the transcript graduates but does not meet the target, 
                 //print it to file and set the lastPrinted tracker
-                input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
+
+                temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
                 lastPrinted = input_Transcript.CumulativeGPA;
                 overallSummary += "\n\n The lowest possible graduating GPA achievable is: " + input_Transcript.CumulativeGPA.ToString("F2");
+
+                frmOut.SetDisplayPage(TabType.Minimum, input_Transcript, temp);
             }
 
             // if not at the target, loop until meeting requirements
@@ -414,13 +411,15 @@ namespace GPA_Calculator_UI_2
                     if (!input_Transcript.CourseList[i].Completed)
                     {
                         //increment one course by one letter grade
-                        input_Transcript.CourseList[i].PercentGrade += 10.0;
+                        input_Transcript.CourseList[i].IncrementLetterGrade();
 
                         // recalculate and check the gpa. if meeting the target, print to file and return
                         input_Transcript.CalcCumuGPA();
                         if (input_Transcript.CumulativeGPA >= targetGPA)
                         {
-                            input_Transcript.PrintTranscript(startPath + "\\Output\\Target.txt", PrintType.FancyText);
+                            temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Target.txt", PrintType.FancyText);
+                            
+                            frmOut.SetDisplayPage(TabType.Target, input_Transcript, temp);
                         }
                         //otherwise, check if it graduates and surpasses the last printed by at least .10
                         //if it does, print to file and continue checks
@@ -432,7 +431,10 @@ namespace GPA_Calculator_UI_2
                     }
                 }
             }
-            input_Transcript.PrintTranscript(startPath + "\\Output\\Maximum.txt", PrintType.FancyText);
+            temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Maximum.txt", PrintType.FancyText);
+
+            frmOut.SetDisplayPage(TabType.Maximum, input_Transcript, temp);
+            
             overallSummary += "\n\n The highest GPA achievable without repeating courses is: "+
                                             input_Transcript.CumulativeGPA.ToString("F2");
 
@@ -447,7 +449,6 @@ namespace GPA_Calculator_UI_2
             frmOut.Show();
 
             return overallSummary;
-
         }
 
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
@@ -481,18 +482,33 @@ namespace GPA_Calculator_UI_2
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            if (ValidateSemesters(semesterPages) && ValidateOtherInputs() && inputIsAutoCompleted)
+            //clear the transcript in case they punch the button more than once 
+            input_Transcript = new Transcript();
+            
+            //input validation for whole form now
+            if (ValidateSemesters(semesterPages) && ValidateOtherInputs())
             {
+                //fill in the form if there were any changes
+                AutoFill(semesterPages);
+                lblWarning.Text = "No Warnings";
+
+                //loop over grids
+                foreach (DataGridView semesterPage in semesterPages)
+                {//Get the semesters from the datagrids and put them in the transcript
+                    AddSemesterToTranscript(semesterPage);
+                }
+
+                //setup courselist and cumulative GPA
+                input_Transcript.SetupCourseList();
+                input_Transcript.CalcCumuGPA();
+
                 //Calculate 
                 calculationSummaryItems = CalcOutcome_Formbound(targetGPA, increment);
 
                 //Show overall summary
                 MessageBox.Show(calculationSummaryItems);
             }
-            else
-            {
-                lblWarning.Text = "Please use the Validate Form button to ensure that all inputs are acceptable.";
-            }
+
         }
 
 
@@ -519,28 +535,9 @@ namespace GPA_Calculator_UI_2
 
         private void btnTestInput_Click(object sender, EventArgs e)
         {
-            //clear the transcript in case they punch the button more than once 
-            input_Transcript = new Transcript();
-            lblWarning.Text = String.Empty;
-
-            //Call input validation
-            if (ValidateSemesters(semesterPages) && ValidateOtherInputs())
+            if (ValidateSemesters(semesterPages))
             {
-                //loop over grids
-                foreach (DataGridView semesterPage in semesterPages)
-                {//Get the semesters from the datagrids and put them in the transcript
-                    AddSemesterToTranscript(semesterPage);
-                }
-
-                //setup courselist and cumulative GPA
-                input_Transcript.SetupCourseList();
-                input_Transcript.CalcCumuGPA();
-
-                inputIsAutoCompleted = true;
-
-                //fill in the form
                 AutoFill(semesterPages);
-                lblWarning.Text = "No Warnings";
             }
         }
         

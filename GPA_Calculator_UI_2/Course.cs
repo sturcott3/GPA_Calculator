@@ -17,7 +17,8 @@ namespace GPA_Calculator_2
         public string Code { get; set; }
         public double CreditHours { get; set; }
         public bool Completed { get; set; }
-        public char LetterGrade { get; set; }
+        private char letterGrade;
+        public char LetterGrade { get => letterGrade; set { letterGrade = value; QualityPoints = CalcQualityPoints(CreditHours, letterGrade); } }
         public double QualityPoints { get; set; }
         public string Included { get; set; }
 
@@ -109,8 +110,22 @@ namespace GPA_Calculator_2
                 //    break;
             }
             return qualityPoints;
-        }       
-        //-_-_End Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+        }
 
+        public void IncrementLetterGrade()
+        {//this calls the property to force recalculate QPs
+            switch (LetterGrade)
+            {
+                case 'D':
+                    LetterGrade = 'C';
+                    break;
+                case 'C':
+                    LetterGrade = 'B';
+                    break;
+                case 'B':
+                    LetterGrade = 'A';
+                    break;
+            }
+        }
     }
 }

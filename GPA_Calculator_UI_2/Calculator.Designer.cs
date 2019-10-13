@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grdDisplay_Sem_1 = new System.Windows.Forms.DataGridView();
             this.colCourseCode_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCreditHours_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -89,14 +89,14 @@
             // grdDisplay_Sem_1
             // 
             this.grdDisplay_Sem_1.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grdDisplay_Sem_1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grdDisplay_Sem_1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grdDisplay_Sem_1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grdDisplay_Sem_1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colCourseCode_1,
@@ -438,7 +438,7 @@
             this.btnTestInput.Name = "btnTestInput";
             this.btnTestInput.Size = new System.Drawing.Size(73, 91);
             this.btnTestInput.TabIndex = 13;
-            this.btnTestInput.Text = "Validate Input";
+            this.btnTestInput.Text = "Auto Fill";
             this.btnTestInput.UseVisualStyleBackColor = false;
             this.btnTestInput.Click += new System.EventHandler(this.btnTestInput_Click);
             // 

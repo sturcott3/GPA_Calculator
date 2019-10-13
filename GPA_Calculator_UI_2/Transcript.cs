@@ -146,7 +146,7 @@ namespace GPA_Calculator_2
             
             foreach (Course singleCourse in CourseList)
             {
-                if (singleCourse.PercentGrade != -1)
+                if (singleCourse.LetterGrade != 'I')
                 {
                     creditHouraccumulator += singleCourse.CreditHours;
                     qualityPointAccumulator += singleCourse.QualityPoints;
@@ -165,7 +165,7 @@ namespace GPA_Calculator_2
 
                 foreach (Course singleCourse in CourseList)
                 {
-                    if (singleCourse.PercentGrade < 50)
+                    if (singleCourse.LetterGrade == 'F')
                     {
                         isPassing = false;
                     }
