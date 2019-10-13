@@ -16,14 +16,16 @@ namespace GPA_Calculator_UI_2
         /*
          TODO 
          - Add another form with instructions - accessed through menu 
+            - Setup color legend for output form, input form
+        
+         - Better Output for transcript that cant pass
 
          - Run more test cases/more unit tests
             - a test to ensure GPA calculations are accurate with many repeated courses
             - a test to ensure transcript printout is accurate even with repeated courses
             - a test to demonstrate what happens with input that cant graduate
+            
 
-         - Setup color coding and legend for output form
-         
          - <stretch goal> Handle course equivalencies 
          - <stretch goal> Handle cases where students have taken more than one program (need equivalencies for this)
          - <stretch goal> Handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 

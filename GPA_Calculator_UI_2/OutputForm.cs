@@ -76,10 +76,56 @@ namespace GPA_Calculator_UI_2
                     rowValues[5] =  currentCourse.Included;
                     targetGrid.Rows.Add(rowValues);
                 }
-
                 //blank line in the grid
                 targetGrid.Rows.Add();
             }
+
+            foreach (DataGridViewRow row in targetGrid.Rows)
+            {
+                Color color = DetermineRowColor(row);
+
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Selected = false;
+                    cell.Style.BackColor = color;
+                }
+            }
+        }
+
+        private Color DetermineRowColor(DataGridViewRow current)
+        {
+            Color result = new Color();
+
+            //Excluded courses
+            if ((string)current.Cells[5].Value == "EXCLUDED")
+            {
+                result = Color.Tan;
+            }
+
+            //Failing Course, Stops transcript from passing
+            else if ((string)current.Cells[5].Value == "INCLUDED" &&
+                (string)current.Cells[3].Value == "F")
+            {
+                result = Color.Salmon;
+            }
+
+            //Incomplete (generated) courses
+            else if ((string)current.Cells[5].Value == "INCLUDED" &&
+                (string)current.Cells[4].Value == "Incomplete")
+            {
+                result = Color.CornflowerBlue;
+            }
+
+            //completed passing courses
+            else if ((string)current.Cells[5].Value == "INCLUDED" &&
+                (string)current.Cells[4].Value == "Complete")
+            {
+
+                result = Color.LightSeaGreen;
+            }
+
+
+            return result;
         }
     }
 
