@@ -1,6 +1,6 @@
 ﻿namespace GPA_Calculator_UI_2
 {
-    partial class Calculator
+    partial class Editor
     {
         /// <summary>
         /// Required designer variable.
@@ -474,7 +474,7 @@
             this.lblWarning.Size = new System.Drawing.Size(22, 17);
             this.lblWarning.Text = ". . .";
             // 
-            // Calculator
+            // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -493,8 +493,8 @@
             this.Controls.Add(this.mnuMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.mnuMain;
-            this.Name = "Calculator";
-            this.Text = "EZ-GPA Calculator";
+            this.Name = "Editor";
+            this.Text = "EZ-GPA Calculator - Editor";
             this.Load += new System.EventHandler(this.Calculator_Load);
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplay_Sem_1)).EndInit();
             this.mnuMain.ResumeLayout(false);

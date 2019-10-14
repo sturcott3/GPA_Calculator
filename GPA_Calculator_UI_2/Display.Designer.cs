@@ -1,6 +1,6 @@
 ﻿namespace GPA_Calculator_UI_2
 {
-    partial class OutputForm
+    partial class Display
     {
         /// <summary>
         /// Required designer variable.
@@ -34,10 +34,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabOutputParent = new System.Windows.Forms.TabControl();
             this.tabOriginal = new System.Windows.Forms.TabPage();
-            this.tabMinimum = new System.Windows.Forms.TabPage();
-            this.tabTarget = new System.Windows.Forms.TabPage();
-            this.tabMaximum = new System.Windows.Forms.TabPage();
-            this.lblSummaryOriginal = new System.Windows.Forms.Label();
+            this.lbxSummaryOriginal = new System.Windows.Forms.ListBox();
             this.grdDisplay_Original = new System.Windows.Forms.DataGridView();
             this.colCourseCode_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCreditHours_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,6 +42,8 @@
             this.colLetterGrade_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colComplete_1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colConsidered = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabMinimum = new System.Windows.Forms.TabPage();
+            this.lbxSummaryMinimum = new System.Windows.Forms.ListBox();
             this.grdDisplayMinimum = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,7 +51,8 @@
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblSummaryMinimum = new System.Windows.Forms.Label();
+            this.tabTarget = new System.Windows.Forms.TabPage();
+            this.lbxSummaryTarget = new System.Windows.Forms.ListBox();
             this.grdDisplayTarget = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -60,7 +60,8 @@
             this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblSummaryTarget = new System.Windows.Forms.Label();
+            this.tabMaximum = new System.Windows.Forms.TabPage();
+            this.lbxSummaryHighest = new System.Windows.Forms.ListBox();
             this.grdDisplayMaximum = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -68,15 +69,14 @@
             this.dataGridViewTextBoxColumn16 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn17 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn18 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblSummaryMaximum = new System.Windows.Forms.Label();
             this.tabOutputParent.SuspendLayout();
             this.tabOriginal.SuspendLayout();
-            this.tabMinimum.SuspendLayout();
-            this.tabTarget.SuspendLayout();
-            this.tabMaximum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplay_Original)).BeginInit();
+            this.tabMinimum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplayMinimum)).BeginInit();
+            this.tabTarget.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplayTarget)).BeginInit();
+            this.tabMaximum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplayMaximum)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,8 +95,8 @@
             // 
             // tabOriginal
             // 
+            this.tabOriginal.Controls.Add(this.lbxSummaryOriginal);
             this.tabOriginal.Controls.Add(this.grdDisplay_Original);
-            this.tabOriginal.Controls.Add(this.lblSummaryOriginal);
             this.tabOriginal.Location = new System.Drawing.Point(4, 22);
             this.tabOriginal.Name = "tabOriginal";
             this.tabOriginal.Padding = new System.Windows.Forms.Padding(3);
@@ -105,47 +105,13 @@
             this.tabOriginal.Text = "Original";
             this.tabOriginal.UseVisualStyleBackColor = true;
             // 
-            // tabMinimum
+            // lbxSummaryOriginal
             // 
-            this.tabMinimum.Controls.Add(this.grdDisplayMinimum);
-            this.tabMinimum.Controls.Add(this.lblSummaryMinimum);
-            this.tabMinimum.Location = new System.Drawing.Point(4, 22);
-            this.tabMinimum.Name = "tabMinimum";
-            this.tabMinimum.Size = new System.Drawing.Size(577, 498);
-            this.tabMinimum.TabIndex = 1;
-            this.tabMinimum.Text = "Minimum Graduating";
-            this.tabMinimum.UseVisualStyleBackColor = true;
-            // 
-            // tabTarget
-            // 
-            this.tabTarget.Controls.Add(this.grdDisplayTarget);
-            this.tabTarget.Controls.Add(this.lblSummaryTarget);
-            this.tabTarget.Location = new System.Drawing.Point(4, 22);
-            this.tabTarget.Name = "tabTarget";
-            this.tabTarget.Size = new System.Drawing.Size(577, 498);
-            this.tabTarget.TabIndex = 2;
-            this.tabTarget.Text = "Target (Or Closest)";
-            this.tabTarget.UseVisualStyleBackColor = true;
-            // 
-            // tabMaximum
-            // 
-            this.tabMaximum.Controls.Add(this.grdDisplayMaximum);
-            this.tabMaximum.Controls.Add(this.lblSummaryMaximum);
-            this.tabMaximum.Location = new System.Drawing.Point(4, 22);
-            this.tabMaximum.Name = "tabMaximum";
-            this.tabMaximum.Size = new System.Drawing.Size(577, 498);
-            this.tabMaximum.TabIndex = 3;
-            this.tabMaximum.Text = "Highest Possible";
-            this.tabMaximum.UseVisualStyleBackColor = true;
-            // 
-            // lblSummaryOriginal
-            // 
-            this.lblSummaryOriginal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblSummaryOriginal.Location = new System.Drawing.Point(3, 3);
-            this.lblSummaryOriginal.Name = "lblSummaryOriginal";
-            this.lblSummaryOriginal.Size = new System.Drawing.Size(571, 111);
-            this.lblSummaryOriginal.TabIndex = 0;
-            this.lblSummaryOriginal.Text = "\r\n";
+            this.lbxSummaryOriginal.FormattingEnabled = true;
+            this.lbxSummaryOriginal.Location = new System.Drawing.Point(3, 5);
+            this.lbxSummaryOriginal.Name = "lbxSummaryOriginal";
+            this.lbxSummaryOriginal.Size = new System.Drawing.Size(571, 108);
+            this.lbxSummaryOriginal.TabIndex = 2;
             // 
             // grdDisplay_Original
             // 
@@ -215,6 +181,25 @@
             this.colConsidered.Name = "colConsidered";
             this.colConsidered.ReadOnly = true;
             // 
+            // tabMinimum
+            // 
+            this.tabMinimum.Controls.Add(this.lbxSummaryMinimum);
+            this.tabMinimum.Controls.Add(this.grdDisplayMinimum);
+            this.tabMinimum.Location = new System.Drawing.Point(4, 22);
+            this.tabMinimum.Name = "tabMinimum";
+            this.tabMinimum.Size = new System.Drawing.Size(577, 498);
+            this.tabMinimum.TabIndex = 1;
+            this.tabMinimum.Text = "Minimum Graduating";
+            this.tabMinimum.UseVisualStyleBackColor = true;
+            // 
+            // lbxSummaryMinimum
+            // 
+            this.lbxSummaryMinimum.FormattingEnabled = true;
+            this.lbxSummaryMinimum.Location = new System.Drawing.Point(3, 5);
+            this.lbxSummaryMinimum.Name = "lbxSummaryMinimum";
+            this.lbxSummaryMinimum.Size = new System.Drawing.Size(571, 108);
+            this.lbxSummaryMinimum.TabIndex = 4;
+            // 
             // grdDisplayMinimum
             // 
             this.grdDisplayMinimum.BackgroundColor = System.Drawing.Color.White;
@@ -283,14 +268,24 @@
             this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             this.dataGridViewTextBoxColumn6.ReadOnly = true;
             // 
-            // lblSummaryMinimum
+            // tabTarget
             // 
-            this.lblSummaryMinimum.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblSummaryMinimum.Location = new System.Drawing.Point(3, 3);
-            this.lblSummaryMinimum.Name = "lblSummaryMinimum";
-            this.lblSummaryMinimum.Size = new System.Drawing.Size(571, 111);
-            this.lblSummaryMinimum.TabIndex = 2;
-            this.lblSummaryMinimum.Text = "\r\n";
+            this.tabTarget.Controls.Add(this.lbxSummaryTarget);
+            this.tabTarget.Controls.Add(this.grdDisplayTarget);
+            this.tabTarget.Location = new System.Drawing.Point(4, 22);
+            this.tabTarget.Name = "tabTarget";
+            this.tabTarget.Size = new System.Drawing.Size(577, 498);
+            this.tabTarget.TabIndex = 2;
+            this.tabTarget.Text = "Target ";
+            this.tabTarget.UseVisualStyleBackColor = true;
+            // 
+            // lbxSummaryTarget
+            // 
+            this.lbxSummaryTarget.FormattingEnabled = true;
+            this.lbxSummaryTarget.Location = new System.Drawing.Point(3, 5);
+            this.lbxSummaryTarget.Name = "lbxSummaryTarget";
+            this.lbxSummaryTarget.Size = new System.Drawing.Size(571, 108);
+            this.lbxSummaryTarget.TabIndex = 4;
             // 
             // grdDisplayTarget
             // 
@@ -360,14 +355,24 @@
             this.dataGridViewTextBoxColumn12.Name = "dataGridViewTextBoxColumn12";
             this.dataGridViewTextBoxColumn12.ReadOnly = true;
             // 
-            // lblSummaryTarget
+            // tabMaximum
             // 
-            this.lblSummaryTarget.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblSummaryTarget.Location = new System.Drawing.Point(3, 3);
-            this.lblSummaryTarget.Name = "lblSummaryTarget";
-            this.lblSummaryTarget.Size = new System.Drawing.Size(571, 111);
-            this.lblSummaryTarget.TabIndex = 2;
-            this.lblSummaryTarget.Text = "\r\n";
+            this.tabMaximum.Controls.Add(this.lbxSummaryHighest);
+            this.tabMaximum.Controls.Add(this.grdDisplayMaximum);
+            this.tabMaximum.Location = new System.Drawing.Point(4, 22);
+            this.tabMaximum.Name = "tabMaximum";
+            this.tabMaximum.Size = new System.Drawing.Size(577, 498);
+            this.tabMaximum.TabIndex = 3;
+            this.tabMaximum.Text = "Highest Possible";
+            this.tabMaximum.UseVisualStyleBackColor = true;
+            // 
+            // lbxSummaryHighest
+            // 
+            this.lbxSummaryHighest.FormattingEnabled = true;
+            this.lbxSummaryHighest.Location = new System.Drawing.Point(3, 5);
+            this.lbxSummaryHighest.Name = "lbxSummaryHighest";
+            this.lbxSummaryHighest.Size = new System.Drawing.Size(571, 108);
+            this.lbxSummaryHighest.TabIndex = 4;
             // 
             // grdDisplayMaximum
             // 
@@ -437,31 +442,22 @@
             this.dataGridViewTextBoxColumn18.Name = "dataGridViewTextBoxColumn18";
             this.dataGridViewTextBoxColumn18.ReadOnly = true;
             // 
-            // lblSummaryMaximum
-            // 
-            this.lblSummaryMaximum.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblSummaryMaximum.Location = new System.Drawing.Point(3, 3);
-            this.lblSummaryMaximum.Name = "lblSummaryMaximum";
-            this.lblSummaryMaximum.Size = new System.Drawing.Size(571, 111);
-            this.lblSummaryMaximum.TabIndex = 2;
-            this.lblSummaryMaximum.Text = "\r\n";
-            // 
-            // frmOutput
+            // Display
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(585, 524);
             this.Controls.Add(this.tabOutputParent);
-            this.Name = "frmOutput";
-            this.Text = "OutputForm";
+            this.Name = "Display";
+            this.Text = "EZ-GPA Calculator - Summary";
             this.tabOutputParent.ResumeLayout(false);
             this.tabOriginal.ResumeLayout(false);
-            this.tabMinimum.ResumeLayout(false);
-            this.tabTarget.ResumeLayout(false);
-            this.tabMaximum.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplay_Original)).EndInit();
+            this.tabMinimum.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplayMinimum)).EndInit();
+            this.tabTarget.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplayTarget)).EndInit();
+            this.tabMaximum.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grdDisplayMaximum)).EndInit();
             this.ResumeLayout(false);
 
@@ -471,7 +467,6 @@
 
         private System.Windows.Forms.TabControl tabOutputParent;
         private System.Windows.Forms.TabPage tabOriginal;
-        private System.Windows.Forms.Label lblSummaryOriginal;
         private System.Windows.Forms.TabPage tabMinimum;
         private System.Windows.Forms.TabPage tabTarget;
         private System.Windows.Forms.TabPage tabMaximum;
@@ -489,7 +484,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
-        private System.Windows.Forms.Label lblSummaryMinimum;
         private System.Windows.Forms.DataGridView grdDisplayTarget;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
@@ -497,7 +491,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn11;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn12;
-        private System.Windows.Forms.Label lblSummaryTarget;
         private System.Windows.Forms.DataGridView grdDisplayMaximum;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn13;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn14;
@@ -505,6 +498,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn16;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn17;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn18;
-        private System.Windows.Forms.Label lblSummaryMaximum;
+        private System.Windows.Forms.ListBox lbxSummaryOriginal;
+        private System.Windows.Forms.ListBox lbxSummaryMinimum;
+        private System.Windows.Forms.ListBox lbxSummaryTarget;
+        private System.Windows.Forms.ListBox lbxSummaryHighest;
     }
 }

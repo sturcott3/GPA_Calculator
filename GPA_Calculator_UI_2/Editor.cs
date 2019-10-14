@@ -11,27 +11,32 @@ using GPA_Calculator_2;
 
 namespace GPA_Calculator_UI_2
 {
-    public partial class Calculator : Form
+    public partial class Editor : Form
     {
         /*
          TODO 
          - Add another form with instructions - accessed through menu 
             - Setup color legend for output form, input form
         
-         - Better Output for transcript that cant pass
+         - Set up default outputs to 
+            - Handle Output for transcript that cant pass
+
+            - Handle Output for a transcript that cant meet the target
+         
+
+         - add a button to allow user to delete rows
 
          - Run more test cases/more unit tests
             - a test to ensure GPA calculations are accurate with many repeated courses
             - a test to ensure transcript printout is accurate even with repeated courses
             - a test to demonstrate what happens with input that cant graduate
             
-
+         - <stretch goal> have courses of same code highlight each other in outputform
          - <stretch goal> Handle course equivalencies 
          - <stretch goal> Handle cases where students have taken more than one program (need equivalencies for this)
          - <stretch goal> Handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 
          - <stretch goal> Get input for course requirements and evaluate based on that i.e. different required numbers of electives
          - <stretch goal> Allow user to enter either letter grade or percent grade instead of requiring only percent
-         - <stretch goal> Add a column to the input form to display included/excluded
          - <stretch goal> Create print method (with PrintType.Csv) for consumption in Excel
         */
 
@@ -56,7 +61,7 @@ namespace GPA_Calculator_UI_2
         //to control the status strip
         private Timer delay = new Timer();
 
-        public Calculator()
+        public Editor()
         {
             InitializeComponent();
         }
@@ -180,7 +185,7 @@ namespace GPA_Calculator_UI_2
                         //highlight bad inputs
                         foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                         {
-                            cell.Style.BackColor = Color.Salmon;
+                            cell.Style.BackColor = Transcript.ShadeBad;
                             cell.Selected = false;
                         }
 
@@ -199,7 +204,7 @@ namespace GPA_Calculator_UI_2
                         //highlight bad inputs
                         foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                         {
-                            cell.Style.BackColor = Color.Salmon;
+                            cell.Style.BackColor = Transcript.ShadeBad;
                             cell.Selected = false;
                         }
                         //return control to user, but invalidate calculate button
@@ -214,7 +219,7 @@ namespace GPA_Calculator_UI_2
                         //highlight bad inputs
                         foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                         {
-                            cell.Style.BackColor = Color.Salmon;
+                            cell.Style.BackColor = Transcript.ShadeBad;
                             cell.Selected = false;
                         }
                         //return control to user, but invalidate calculate button
@@ -234,7 +239,7 @@ namespace GPA_Calculator_UI_2
                             //highlight bad inputs
                             foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                             {
-                                cell.Style.BackColor = Color.Salmon;
+                                cell.Style.BackColor = Transcript.ShadeBad;
                                 cell.Selected = false;
                             }
                             //return control to user, but invalidate calculate button
@@ -249,7 +254,7 @@ namespace GPA_Calculator_UI_2
                             //highlight bad inputs
                             foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                             {
-                                cell.Style.BackColor = Color.Salmon;
+                                cell.Style.BackColor = Transcript.ShadeBad;
                                 cell.Selected = false;
                             }
                             //return control to user, but invalidate calculate button
@@ -278,7 +283,7 @@ namespace GPA_Calculator_UI_2
 
                         foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                         {//color incomplete rows light blue to indicate they will be calculated
-                            cell.Style.BackColor = Color.CornflowerBlue;
+                            cell.Style.BackColor = Transcript.ShadeIncomplete;
                         }
                     }
                     else
@@ -292,7 +297,7 @@ namespace GPA_Calculator_UI_2
 
                             foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                             {//color incomplete rows light blue to indicate they will be calculated
-                                cell.Style.BackColor = Color.CornflowerBlue;
+                                cell.Style.BackColor = Transcript.ShadeIncomplete;
                             }
                         }
                         else
@@ -301,7 +306,7 @@ namespace GPA_Calculator_UI_2
 
                             foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                             {//color complete rows light green to indicate they will not be touched
-                                cell.Style.BackColor = Color.LightSeaGreen;
+                                cell.Style.BackColor = Transcript.Shadepass;
                             }
                         }
                     }
@@ -311,7 +316,7 @@ namespace GPA_Calculator_UI_2
                     {
                         foreach (DataGridViewCell cell in semesterGrid.Rows[currentRow].Cells)
                         {//color failed courses yellow to show they will cause the transcript to fail unless they have been repeated
-                            cell.Style.BackColor = Color.LightYellow;
+                            cell.Style.BackColor = Transcript.ShadeFail;
                         }
                     }
                 }
@@ -352,22 +357,25 @@ namespace GPA_Calculator_UI_2
 
         public string CalcOutcome_Formbound(double targetGPA, double increment)
         {
+            bool minimumPrinted = false;
+            bool targetPrinted = false;
+
             //create the output form
-            OutputForm frmOut = new OutputForm(); 
+            Display frmOut = new Display(); 
 
             //print the original to file <TODO> according to user preference
-            string[] temp = input_Transcript.PrintTranscript(startPath +  "\\Output\\Original.txt", PrintType.FancyText);
+            List<string> temp = input_Transcript.PrintTranscript(startPath +  "\\Output\\Original.txt", PrintType.FancyText);
 
             frmOut.SetDisplayPage(TabType.Original, input_Transcript, temp);
 
-            //create an object to catch the output summary
+            //to catch the output summary
             string overallSummary = String.Empty;
 
             //save the starting cumulative GPA in output summary
             overallSummary += "Starting Cumulative GPA: " + input_Transcript.CumulativeGPA.ToString("F2");
 
             //tracking variable (number of Transcripts printed)
-            int numEx = 1;
+            int numEx = 0;
             double lastPrinted = 0.0;
 
             //set each course at -1 (incomplete) to [D / recalc QPs]
@@ -379,53 +387,68 @@ namespace GPA_Calculator_UI_2
             input_Transcript.CalcCumuGPA();
 
             //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-            //***If GPA meets the target, print it out and save that as the minimum  
+            //***If GPA meets the target, print it out and save that as both minimum  and target
             //(means that existing grades are high enough to pass with all 50s) 
 
-            if (input_Transcript.CumulativeGPA >= targetGPA)
+            if (input_Transcript.CumulativeGPA >= targetGPA  && input_Transcript.TestGraduating()) 
             {
                 temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
                 overallSummary += "\n\n Congrats, your existing grades are high enough that with a D in all outstanding courses," +
                     " your GPA would be: " + input_Transcript.CumulativeGPA.ToString("F2");
 
                 frmOut.SetDisplayPage(TabType.Minimum, input_Transcript, temp);
+                minimumPrinted = true;
+
+                frmOut.SetDisplayPage(TabType.Target, input_Transcript, temp);
+                targetPrinted = true;
             }
 
             else if (input_Transcript.TestGraduating())
             {
-                //If the transcript graduates but does not meet the target, 
+                //If the transcript graduates but does not meet the target, set it to the minimum,
                 //print it to file and set the lastPrinted tracker
-
+                minimumPrinted = true;
                 temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
                 lastPrinted = input_Transcript.CumulativeGPA;
                 overallSummary += "\n\n The lowest possible graduating GPA achievable is: " + input_Transcript.CumulativeGPA.ToString("F2");
-
                 frmOut.SetDisplayPage(TabType.Minimum, input_Transcript, temp);
             }
 
-            // if not at the target, loop until meeting requirements
-            while ((input_Transcript.CumulativeGPA < targetGPA) && (!input_Transcript.TestMaxChecked()))
+            // if not at the target, loop until hit A in every incomplete course
+            while (!input_Transcript.TestMaxChecked())
             {
                 //loop over all courses
                 for (int i = 0; i < input_Transcript.CourseList.Count; i++)
                 {
-                    //ignore courses that are marked as completed (TODO deal with scenario where courses need to be repeated)
+                    //ignore courses that are marked as completed 
                     if (!input_Transcript.CourseList[i].Completed)
                     {
                         //increment one course by one letter grade
                         input_Transcript.CourseList[i].IncrementLetterGrade();
 
-                        // recalculate and check the gpa. if meeting the target, print to file and return
+                        //recalculate and check the gpa. if meeting the target, print 
                         input_Transcript.CalcCumuGPA();
-                        if (input_Transcript.CumulativeGPA >= targetGPA)
+                        if (!targetPrinted && input_Transcript.CumulativeGPA >= targetGPA && input_Transcript.TestGraduating())
                         {
+                            targetPrinted = true;
+                            overallSummary += "\n\n Congratulations, target is achievable!";
                             temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Target.txt", PrintType.FancyText);
-                            
                             frmOut.SetDisplayPage(TabType.Target, input_Transcript, temp);
                         }
-                        //otherwise, check if it graduates and surpasses the last printed by at least .10
+
+                        //if the minimum hasn't been printed yet, do so
+                        if (!minimumPrinted && input_Transcript.TestGraduating())
+                        {
+                            minimumPrinted = true;
+                            lastPrinted = input_Transcript.CumulativeGPA;
+                            overallSummary += "\n\n The lowest possible graduating GPA achievable is: " + input_Transcript.CumulativeGPA.ToString("F2");
+                            temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Minimum.txt", PrintType.FancyText);
+                            frmOut.SetDisplayPage(TabType.Minimum, input_Transcript, temp);
+                        }
+
+                        //check if it graduates and surpasses the last printed by the user defined increment
                         //if it does, print to file and continue checks
-                        else if ((input_Transcript.TestGraduating()) && (input_Transcript.CumulativeGPA >= (lastPrinted + increment)))
+                        if ((input_Transcript.CumulativeGPA >= (lastPrinted + increment)) && input_Transcript.TestGraduating())
                         {
                             input_Transcript.PrintTranscript(startPath + "\\Output\\Simulated-V" + numEx++ + ".txt", PrintType.FancyText);
                             lastPrinted += increment;
@@ -436,13 +459,13 @@ namespace GPA_Calculator_UI_2
             temp = input_Transcript.PrintTranscript(startPath + "\\Output\\Maximum.txt", PrintType.FancyText);
 
             frmOut.SetDisplayPage(TabType.Maximum, input_Transcript, temp);
-            
+
             overallSummary += "\n\n The highest GPA achievable without repeating courses is: "+
                                             input_Transcript.CumulativeGPA.ToString("F2");
 
             //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
             //record number of attempts
-            Console.WriteLine(numEx + " cases tested");
+            overallSummary += "\n\n" + numEx + " cases tested";
 
             //save the path for the output folder
             overallSummary += "\n\n Please find additional detailed results at " +startPath + "\\Output";
@@ -544,8 +567,7 @@ namespace GPA_Calculator_UI_2
         }
         
         //ValueChanged events are needed to save changes without needing a user generated event (i.e. save button), 
-        //and ollow the user to jump around without losing data. They are doubly useful to detect changes and require the user to validate (autofill)
-        //the form every time they make a change
+        //and ollow the user to jump around without losing data. 
         private void grd_Display_Sem1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             grdDisplay_Sem_1.EndEdit();

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.IO;
+
 /*Major Assignment 1
  CP-350: Critical Thinking II
  Prof. Troy Mangatal
@@ -13,6 +12,13 @@ namespace GPA_Calculator_2
 {
     public class Transcript
     {
+        //color definitions to make changes/updates easier...(and make code more readable?)
+        public static Color ShadeBad = Color.Salmon;
+        public static Color ShadeFail = Color.LightSalmon;
+        public static Color ShadeExclude = Color.Tan;
+        public static Color ShadeIncomplete = Color.CornflowerBlue;
+        public static Color Shadepass = Color.LightSeaGreen;
+
 //-_-_Properties-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 
         public List<Semester> Semesters { get; set; }
@@ -227,7 +233,7 @@ namespace GPA_Calculator_2
                     if (tester.Code.Equals(CourseList[idx].Code))
                     {
                         //compare the marks, 
-                        if (tester.PercentGrade > CourseList[idx].PercentGrade)
+                        if (tester.PercentGrade >= CourseList[idx].PercentGrade)
                         {
                             //if the tester is higher, get rid of the lower grade, and mark it as EXClUDED
                             CourseList[idx].Included = "EXCLUDED";
@@ -239,41 +245,62 @@ namespace GPA_Calculator_2
         }
         
 
-        public string[] PrintTranscript(string filename, PrintType userPreference)
+        public List<string> PrintTranscript(string filename, PrintType userPreference)
         {
-            string[] outputSummary = new string[4];
+            List<string> outputSummary = new List<string>();
 
             switch (userPreference)
             {
                 case PrintType.PlainText:
-                    outputSummary = PrintToPlainTxt(filename);
+                    outputSummary = GenerateSummary(filename);
+                    PrintToPlainTxt(filename);
                     break;
 
                 case PrintType.FancyText:
-                    outputSummary = PrintToFancyTxt(filename);
+                    outputSummary = GenerateSummary(filename);
+                    PrintToFancyTxt(filename);
                     break;
 
                 case PrintType.Csv:
-
+                    GenerateSummary(filename);
+                    //<stretch>
                     break;
 
                 case PrintType.None:
-
+                    outputSummary = GenerateSummary(filename);
                     break;
             }
             return outputSummary; 
         }
 
-        private string[] PrintToPlainTxt(string filename)
+        private List<string> GenerateSummary(string filename)
         {
-            string[] outputSummary = new string[4];
-            StreamWriter outputFile = new StreamWriter(filename);
-
-            //return the filename for easy access
-            outputSummary[0] = filename;
+            List<string> outputSummary = new List<string>();
 
             //the student's name, defaults to guest
-            outputSummary[1] = Header[0];
+            outputSummary.Add(Header[0]);
+
+            //Summarize the semesters
+            int numSemester = 1;
+            foreach (Semester semester in Semesters)
+            {
+                outputSummary.Add(
+                    semester.Completed ? "Semester " + numSemester + " All courses complete. Semester GPA: " + semester.SemesterGPA.ToString("F2")
+                                       : "Semester " + numSemester + " Incomplete, generated. \n");
+                numSemester++;
+            }
+            //GPA to summary
+            outputSummary.Add( "Cumulative GPA: " + CumulativeGPA.ToString("F2"));
+
+            //add in the filename for easy access
+            outputSummary.Add(filename);
+
+            return outputSummary;
+        }
+
+        private void PrintToPlainTxt(string filename)
+        {
+            StreamWriter outputFile = new StreamWriter(filename);
 
             int numSemester = 1;
 
@@ -303,33 +330,19 @@ namespace GPA_Calculator_2
                 outputFile.WriteLine(semester.Completed ? "Semester Complete" : "Semester Incomplete");
                 outputFile.WriteLine(semester.Completed ? "Semester GPA : " + semester.SemesterGPA : "Semester GPA: N/A");
 
-                //create an at a glance summary of the semesters
-                outputSummary[2] += semester.Completed ? "Semester " + numSemester + " All courses complete. Semester GPA: " + semester.SemesterGPA.ToString("F2")
-                                                                    : "Semester " + numSemester + " Incomplete, generated. \n";
             }
 
             //print cumulative gpa and add it to the summary (always excludes incomplete courses)
             outputFile.WriteLine("Current cumulative GPA: " + CumulativeGPA);
 
-            outputSummary[3] = "Cumulative GPA: " + CumulativeGPA;
-
             outputFile.Close();
-            return outputSummary;
         }
 
-
-        private string[] PrintToFancyTxt(string filename)
+        private void PrintToFancyTxt(string filename)
         {
-            string[] outputSummary = new string[4];
             StreamWriter outputFile = new StreamWriter(filename);
-            
-            //return the filename for easy access
-            outputSummary[0] = filename;
 
-            //the student's name, defaults to guest
-            outputSummary[1] = Header[0];
-
-            int numSemester = 1;
+            int numSemester = 0;
 
             foreach (string line in Header)
             {//print student info
@@ -356,70 +369,18 @@ namespace GPA_Calculator_2
                 //check if the semester was completed and print its GPA if it was
                 outputFile.WriteLine(semester.Completed ? "Semester Complete" : "Semester Incomplete");
                 outputFile.WriteLine(semester.Completed ? "Semester GPA : " + semester.SemesterGPA : "Semester GPA: N/A");
-
-                //create an at a glance summary of the semesters
-                outputSummary[2] += semester.Completed ? "Semester " + numSemester + " All courses complete. Semester GPA: "+ semester.SemesterGPA.ToString("F2") 
-                                                                    : "Semester " + numSemester + " Incomplete, generated. \n";
             }
 
             //print cumulative gpa and add it to the summary (always excludes incomplete courses)
             outputFile.WriteLine("Current cumulative GPA: " + CumulativeGPA);
 
-            outputSummary[3] = "Cumulative GPA: " + CumulativeGPA;
-
             outputFile.Close();
-            return outputSummary;
         }
 
-        private string[] PrintToCsv(string filename)
+        private void PrintToCsv(string filename)
         {//<stretch goal> print for consumption in Excel
-            
-            string[] outputSummary = new string[4];
-
-            //return the filename for easy access
-            outputSummary[0] = filename;
-
-            //the student's name, defaults to guest
-            outputSummary[1] = Header[0];
-
-            //Summarize the semesters
-            int numSemester = 1;
-            foreach (Semester semester in Semesters)
-            {
-                outputSummary[2] += semester.Completed ? "Semester " + numSemester + " All courses complete. Semester GPA: " + semester.SemesterGPA.ToString("F2")
-                                                                        : "Semester " + numSemester + " Incomplete, generated. \n";
-            }
-
-            //GPA to summary
-            outputSummary[3] = "Cumulative GPA: " + CumulativeGPA;
-
-            return outputSummary;
+ 
         }
-
-        private string[] PrintToScreen(string filename) 
-        {
-            string[] outputSummary = new string[4];
-
-            //return the filename for easy access
-            outputSummary[0] = filename;
-
-            //the student's name, defaults to guest
-            outputSummary[1] = Header[0];
-
-            //Summarize the semesters
-            int numSemester = 1;
-            foreach (Semester semester in Semesters)
-            {
-                outputSummary[2] += semester.Completed ? "Semester " + numSemester + " All courses complete. Semester GPA: " + semester.SemesterGPA.ToString("F2")
-                                                                        : "Semester " + numSemester + " Incomplete, generated. \n";
-            }
-
-            //GPA to summary
-            outputSummary[3] = "Cumulative GPA: " + CumulativeGPA;
-
-            return outputSummary;
-        }
-
     }
 
     public enum PrintType

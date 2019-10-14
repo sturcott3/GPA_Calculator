@@ -113,7 +113,7 @@ namespace GPA_Calculator_2
         }
 
         public void IncrementLetterGrade()
-        {//this calls the property to force recalculate QPs
+        {//this calls the property to force recalculation of QPs
             switch (LetterGrade)
             {
                 case 'D':

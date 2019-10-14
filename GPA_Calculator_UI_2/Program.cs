@@ -16,7 +16,7 @@ namespace GPA_Calculator_UI_2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Calculator());
+            Application.Run(new Editor());
         }
     }
 }

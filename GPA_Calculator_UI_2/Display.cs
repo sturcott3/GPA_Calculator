@@ -1,66 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GPA_Calculator_2;
 
 namespace GPA_Calculator_UI_2
 {
-    public partial class OutputForm : Form
+    public partial class Display : Form
     {
-        private Label targetLabel;
+        private ListBox currentListBox;
 
-        private DataGridView targetGrid;
+        private DataGridView currentGrid;
 
+        string[] defaultTargetMessage;
+        string[] defaultMinimumMessage;
 
-        public OutputForm()
+        public Display()
         {
             InitializeComponent();
+
+            //Set default display messages for the two windows that don't always get output,
+            //so that if nothing is calculated, it will give the user a hint as to why
+
+            defaultTargetMessage = new string[] {
+                "No Scenario was calculated for the current target. ",
+                "This is usually because the entered grades are too low to reach the target without repeating courses.",
+                "Please refer to the \"Highest Possible\" tab for details.",
+                "",
+                "***Coming soon: option to determine which courses to repeat.***"};
+
+            defaultMinimumMessage = new string[] {
+                "No Graduating scenario possible. This is because either the highest achievable GPA is below 2.0, or",
+                "a course has been recorded as an F, but is not repeated.",
+                "Show a course as repeated by entering it again on a separate line with (exactly) the same course code and credit hours.",
+                "If the repeat of the course is incomplete, leave the grade field blank as normal."};
+
+            foreach (string line in defaultTargetMessage)
+            {
+                lbxSummaryTarget.Items.Add(line);
+            }
+
+            foreach (string line in defaultMinimumMessage)
+            {
+                lbxSummaryMinimum.Items.Add(line);
+            }
         }
 
-        public void SetDisplayPage(TabType tabType, Transcript toDisplay, string[] summary)
+        public void SetDisplayPage(TabType tabType, Transcript toDisplay, List<string> summary)
         {
             switch (tabType)
             {
                 case TabType.Original:
-                    targetLabel = lblSummaryOriginal;
-                    targetGrid = grdDisplay_Original;
+                    currentListBox = lbxSummaryOriginal;
+                    currentGrid = grdDisplay_Original;
                     SetupDisplayTarget(toDisplay, summary);
                     break;
 
                 case TabType.Minimum:
-                    targetLabel = lblSummaryMinimum;
-                    targetGrid = grdDisplayMinimum;
+                    currentListBox = lbxSummaryMinimum;
+                    currentGrid = grdDisplayMinimum;
                     SetupDisplayTarget(toDisplay, summary);
                     break;
 
                 case TabType.Target:
-                    targetLabel = lblSummaryTarget;
-                    targetGrid = grdDisplayTarget;
+                    currentListBox = lbxSummaryTarget;
+                    currentGrid = grdDisplayTarget;
                     SetupDisplayTarget(toDisplay, summary);
                     break;
 
                 case TabType.Maximum:
-                    targetLabel = lblSummaryMaximum;
-                    targetGrid = grdDisplayMaximum;
+                    currentListBox = lbxSummaryHighest;
+                    currentGrid = grdDisplayMaximum;
                     SetupDisplayTarget(toDisplay, summary);
                     break;
             }
         }
 
-        void SetupDisplayTarget(Transcript toDisplay, string[] summary)
+        void SetupDisplayTarget(Transcript toDisplay, List<string> summary)
         {
             string[] rowValues;
-            targetLabel.Text = String.Empty;
+            currentListBox.Items.Clear();
             
             foreach (string line in summary)
             {
-                targetLabel.Text += line + "\n";
+                currentListBox.Items.Add(line);
             }
 
             foreach (Semester currentSemester in toDisplay.Semesters)
@@ -74,13 +97,13 @@ namespace GPA_Calculator_UI_2
                     rowValues[3] =  currentCourse.LetterGrade.ToString();
                     rowValues[4] =  currentCourse.Completed? "Complete" : "Incomplete";
                     rowValues[5] =  currentCourse.Included;
-                    targetGrid.Rows.Add(rowValues);
+                    currentGrid.Rows.Add(rowValues);
                 }
                 //blank line in the grid
-                targetGrid.Rows.Add();
+                currentGrid.Rows.Add();
             }
 
-            foreach (DataGridViewRow row in targetGrid.Rows)
+            foreach (DataGridViewRow row in currentGrid.Rows)
             {
                 Color color = DetermineRowColor(row);
 
@@ -99,21 +122,21 @@ namespace GPA_Calculator_UI_2
             //Excluded courses
             if ((string)current.Cells[5].Value == "EXCLUDED")
             {
-                result = Color.Tan;
+                result = Transcript.ShadeExclude;
             }
 
             //Failing Course, Stops transcript from passing
             else if ((string)current.Cells[5].Value == "INCLUDED" &&
                 (string)current.Cells[3].Value == "F")
             {
-                result = Color.Salmon;
+                result = Transcript.ShadeFail;
             }
 
             //Incomplete (generated) courses
             else if ((string)current.Cells[5].Value == "INCLUDED" &&
                 (string)current.Cells[4].Value == "Incomplete")
             {
-                result = Color.CornflowerBlue;
+                result = Transcript.ShadeIncomplete;
             }
 
             //completed passing courses
@@ -121,9 +144,8 @@ namespace GPA_Calculator_UI_2
                 (string)current.Cells[4].Value == "Complete")
             {
 
-                result = Color.LightSeaGreen;
+                result = Transcript.Shadepass;
             }
-
 
             return result;
         }
