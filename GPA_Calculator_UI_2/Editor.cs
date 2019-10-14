@@ -15,29 +15,21 @@ namespace GPA_Calculator_UI_2
     {
         /*
          TODO 
-         - Add another form with instructions - accessed through menu 
-            - Setup color legend for output form, input form
-        
-         - Set up default outputs to 
-            - Handle Output for transcript that cant pass
+         - add a control to allow user to delete rows
 
-            - Handle Output for a transcript that cant meet the target
-         
-
-         - add a button to allow user to delete rows
-
-         - Run more test cases/more unit tests
-            - a test to ensure GPA calculations are accurate with many repeated courses
-            - a test to ensure transcript printout is accurate even with repeated courses
-            - a test to demonstrate what happens with input that cant graduate
+         - add instructions
             
-         - <stretch goal> have courses of same code highlight each other in outputform
+         - <stretch goal> have courses of same code highlight each other
          - <stretch goal> Handle course equivalencies 
-         - <stretch goal> Handle cases where students have taken more than one program (need equivalencies for this)
+         - <stretch goal> Handle cases where students have taken more than one program i.e. many electives (need equivalencies for this)
          - <stretch goal> Handle differing grading modes i.e. Aviation Management(B pass) vs Social Worker(C pass) vs Computer Programmer(D pass) 
          - <stretch goal> Get input for course requirements and evaluate based on that i.e. different required numbers of electives
+         - <stretch goal> Handle program other requirements like placements, and add input for what those requirments are
+         - <stretch goal> Automatic setup of program requirements like courses in the editor? would be a huge amount of work to record all the data
          - <stretch goal> Allow user to enter either letter grade or percent grade instead of requiring only percent
-         - <stretch goal> Create print method (with PrintType.Csv) for consumption in Excel
+         - <stretch goal> Fill in print method (with PrintType.Csv) for consumption in Excel, 
+                            and add a control to the form allowing the user to change output type
+         - <stretch goal> Allow the user to choose output directory instead of just telling them where it goes
         */
 
         //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
@@ -536,7 +528,6 @@ namespace GPA_Calculator_UI_2
 
         }
 
-
         private void btnDelSemester_Click(object sender, EventArgs e)
         {
             //prompt the user for confirmation of deletion
@@ -567,7 +558,7 @@ namespace GPA_Calculator_UI_2
         }
         
         //ValueChanged events are needed to save changes without needing a user generated event (i.e. save button), 
-        //and ollow the user to jump around without losing data. 
+        //and allow the user to jump around without losing data. 
         private void grd_Display_Sem1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             grdDisplay_Sem_1.EndEdit();
