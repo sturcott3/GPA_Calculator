@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
 /*Major Assignment 1
  CP-350: Critical Thinking II
  Prof. Troy Mangatal
@@ -10,9 +7,13 @@ using System.Threading.Tasks;
  2019-09-23*/
 namespace GPA_Calculator_2
 {
+
+    //This class is deprecated, but was used in unit testing to directly initialize Transcripts without input.
+    //Leaving it in the project to get feedback about this use of a static class
+    //...should i be using something else to do this?
+
     public static class TestData
     {
-
         //Test dataset 1-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
         public static List<string> student1 = new List<string>(){

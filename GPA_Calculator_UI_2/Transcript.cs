@@ -66,85 +66,6 @@ namespace GPA_Calculator_2
 //-_-_-_-_-_-_-_-_-__-_-_-_-__-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
 //-_-_Methods-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
-        public static Transcript CalcOutcome_Console(Transcript incomplete, double targetGPA)
-        {
-            //-_-Setup_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-            //create a transcript to operate on, and print the original to file
-            incomplete.PrintTranscript("../test/" + incomplete.Header[5] + "/original.txt", PrintType.FancyText);
-            Transcript current  = new Transcript(incomplete);
-
-            //tracking variable (number of *different* Transcripts tested)
-            int numEx = 1;
-            double lastPrinted = 0.0;
-
-            //set each course at -1 (incomplete) to [%50 / D / recalc QPs]
-            for (int i = 0; i < current.CourseList.Count ; i++ )
-            {
-                if (current.CourseList[i].PercentGrade == -1) { current.CourseList[i].PercentGrade = 50.0; } 
-            }
-            //recalculate cumulative GPA
-            current.CalcCumuGPA();
-
-
-            //-Initial Checks-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-__-_-_-_-_-_-
-            //***If GPA meets the target, print it out and return 
-            //(means that existing grades are high enough to pass with all 50s) 
-
-            if (current.CumulativeGPA >= targetGPA)
-            {
-                Console.WriteLine("Congrats, your existing marks are high enough to reach your goal with minimums in all remaining courses");
-                current.PrintTranscript("../test/" + current.Header[5] + "/Calculated_all50s.txt", PrintType.FancyText);
-                return current;
-            }
-
-            //If the transcript graduates, print it to file and set the lastPrinted tracker
-            if (current.TestGraduating())
-            {
-                current.PrintTranscript("../test/" + current.Header[5] + "/minimum.txt", PrintType.FancyText);
-                lastPrinted = current.CumulativeGPA;
-            }
-
-            //Iterative Checks_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-            // if not at the target, loop until meeting requirements
-            while ((current.CumulativeGPA < targetGPA) && (!current.TestMaxChecked()))
-            {
-                //loop over all courses
-                for (int i = 0; i < current.CourseList.Count; i++)
-                {
-                    //ignore courses that are marked as completed (TODO deal with scenario where courses need to be repeated)
-                    if (!current.CourseList[i].Completed)
-                    {
-                        //increment one course by one letter grade
-                        current.CourseList[i].PercentGrade += 10.0;
-
-                        // recalculate and check the gpa. if meeting the target, print to file and return
-                        current.CalcCumuGPA();
-                        if (current.CumulativeGPA >= targetGPA)
-                        {
-                            current.PrintTranscript("../test/"+current.Header[5]+"/final.txt", PrintType.FancyText);
-                            return current;
-                        }
-                        //otherwise, check if it graduates and surpasses the last printed by at least .10
-                        //if it does, print to file and continue checks
-                        else if ((current.TestGraduating()) && (current.CumulativeGPA >= (lastPrinted + 0.10)))
-                        {
-                            current.PrintTranscript("../test/" + current.Header[5] + "/Calculated_" + numEx++ + ".txt", PrintType.FancyText);
-                            lastPrinted += 0.10;
-                        }
-                    }
-                }
-            }
-            current.PrintTranscript("../test/" + current.Header[5] + "/final.txt", PrintType.FancyText);
-
-            //-ShutDown-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-__-_-_-_-_-_-_-_-__
-            //record number of attempts
-            Console.WriteLine(numEx + " cases tested");
-
-            //returned transcript should be the closest possibly achievable to the target without repeating courses
-            return current;
-        }
-
-
         public void CalcCumuGPA()
         {
             double creditHouraccumulator = 0;
@@ -178,7 +99,7 @@ namespace GPA_Calculator_2
                 }
             
             //check that cumulative GPA is acceptable
-            if (CumulativeGPA < 2.0)
+            if (CumulativeGPA < 1.994)
             {
                 isPassing = false;
             }
@@ -219,7 +140,7 @@ namespace GPA_Calculator_2
                 }
             }
 
-            // to get ahold of the courses one at a time, separat from the list
+            // to get ahold of the courses one at a time, separate from the list
             Course tester; 
 
             for (int current = 0; current < CourseList.Count; current++)
@@ -233,7 +154,7 @@ namespace GPA_Calculator_2
                     if (tester.Code.Equals(CourseList[idx].Code))
                     {
                         //compare the marks, 
-                        if (tester.PercentGrade >= CourseList[idx].PercentGrade)
+                        if (tester.PercentGrade > CourseList[idx].PercentGrade)
                         {
                             //if the tester is higher, get rid of the lower grade, and mark it as EXClUDED
                             CourseList[idx].Included = "EXCLUDED";
@@ -243,7 +164,6 @@ namespace GPA_Calculator_2
                 }
             }
         }
-        
 
         public List<string> PrintTranscript(string filename, PrintType userPreference)
         {
@@ -298,6 +218,7 @@ namespace GPA_Calculator_2
             return outputSummary;
         }
 
+        //PrintToFancy and PrintToPlain work exactly the same way, one just has lines instead of whitespace
         private void PrintToPlainTxt(string filename)
         {
             StreamWriter outputFile = new StreamWriter(filename);
